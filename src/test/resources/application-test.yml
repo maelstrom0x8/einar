@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: einar-test
+  flyway:
+    enabled: true
+    url: jdbc:tc:postgresql:16://localhost/db?user=user&password=user
+    password: user
+    user: user
+  datasource:
+    url: jdbc:tc:postgresql:16://localhost/db?user=user&password=user
+    username: user
+    password: user
