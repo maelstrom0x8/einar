@@ -4,9 +4,13 @@
 package io.ceze.einar;
 
 
+import io.ceze.einar.tables.Locations;
 import io.ceze.einar.tables.Profiles;
+import io.ceze.einar.tables.Spaces;
 import io.ceze.einar.tables.Users;
+import io.ceze.einar.tables.records.LocationsRecord;
 import io.ceze.einar.tables.records.ProfilesRecord;
+import io.ceze.einar.tables.records.SpacesRecord;
 import io.ceze.einar.tables.records.UsersRecord;
 
 import org.jooq.ForeignKey;
@@ -27,7 +31,9 @@ public class Keys {
     // UNIQUE and PRIMARY KEY definitions
     // -------------------------------------------------------------------------
 
+    public static final UniqueKey<LocationsRecord> LOCATIONS_PKEY = Internal.createUniqueKey(Locations.LOCATIONS, DSL.name("locations_pkey"), new TableField[] { Locations.LOCATIONS.LOCATION_ID }, true);
     public static final UniqueKey<ProfilesRecord> PROFILES_PKEY = Internal.createUniqueKey(Profiles.PROFILES, DSL.name("profiles_pkey"), new TableField[] { Profiles.PROFILES.PROFILE_ID }, true);
+    public static final UniqueKey<SpacesRecord> SPACES_PKEY = Internal.createUniqueKey(Spaces.SPACES, DSL.name("spaces_pkey"), new TableField[] { Spaces.SPACES.SPACE_ID }, true);
     public static final UniqueKey<UsersRecord> USERS_EMAIL_KEY = Internal.createUniqueKey(Users.USERS, DSL.name("users_email_key"), new TableField[] { Users.USERS.EMAIL }, true);
     public static final UniqueKey<UsersRecord> USERS_PKEY = Internal.createUniqueKey(Users.USERS, DSL.name("users_pkey"), new TableField[] { Users.USERS.USER_ID }, true);
 
@@ -35,5 +41,8 @@ public class Keys {
     // FOREIGN KEY definitions
     // -------------------------------------------------------------------------
 
+    public static final ForeignKey<ProfilesRecord, LocationsRecord> PROFILES__PROFILES_LOCATION_ID_FKEY = Internal.createForeignKey(Profiles.PROFILES, DSL.name("profiles_location_id_fkey"), new TableField[] { Profiles.PROFILES.LOCATION_ID }, Keys.LOCATIONS_PKEY, new TableField[] { Locations.LOCATIONS.LOCATION_ID }, true);
     public static final ForeignKey<ProfilesRecord, UsersRecord> PROFILES__PROFILES_USER_ID_FKEY = Internal.createForeignKey(Profiles.PROFILES, DSL.name("profiles_user_id_fkey"), new TableField[] { Profiles.PROFILES.USER_ID }, Keys.USERS_PKEY, new TableField[] { Users.USERS.USER_ID }, true);
+    public static final ForeignKey<SpacesRecord, UsersRecord> SPACES__SPACES_CREATED_BY_FKEY = Internal.createForeignKey(Spaces.SPACES, DSL.name("spaces_created_by_fkey"), new TableField[] { Spaces.SPACES.CREATED_BY }, Keys.USERS_PKEY, new TableField[] { Users.USERS.USER_ID }, true);
+    public static final ForeignKey<SpacesRecord, LocationsRecord> SPACES__SPACES_LOCATION_ID_FKEY = Internal.createForeignKey(Spaces.SPACES, DSL.name("spaces_location_id_fkey"), new TableField[] { Spaces.SPACES.LOCATION_ID }, Keys.LOCATIONS_PKEY, new TableField[] { Locations.LOCATIONS.LOCATION_ID }, true);
 }

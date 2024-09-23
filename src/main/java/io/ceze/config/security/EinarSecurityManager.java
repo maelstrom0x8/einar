@@ -15,6 +15,7 @@
  */
 package io.ceze.config.security;
 
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -23,22 +24,16 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OAuth2SecurityManager {
+public class EinarSecurityManager {
 
-    private static final Logger LOG = LoggerFactory.getLogger(OAuth2SecurityManager.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EinarSecurityManager.class);
 
-    public AuthenticationId authenticated() {
+    public AuthenticatedUser authenticated() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         Jwt principal = (Jwt) authentication.getPrincipal();
 
-        try {
-            Long userId = principal.getClaim("email");
-            return new AuthenticationId(userId.intValue(), principal.getSubject());
-        } catch (Exception e) {
-            LOG.error("Error extracting the 'user_id' claim");
-        }
-
-        return null;
+        Map<String, Object> claims = principal.getClaims();
+        return new AuthenticatedUser(principal.getSubject(), claims);
     }
 }

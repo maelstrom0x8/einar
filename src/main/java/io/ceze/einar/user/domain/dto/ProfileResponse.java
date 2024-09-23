@@ -13,6 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.ceze.config.security;
+package io.ceze.einar.user.domain.dto;
 
-public record AuthenticationId(Integer id, String subject) {}
+import java.time.LocalDateTime;
+
+public record ProfileResponse(
+        Long profileId,
+        String firstName,
+        String lastName,
+        String email,
+        LocalDateTime dateOfBirth,
+        LocalDateTime created,
+        LocalDateTime lastModified) {}

@@ -4,7 +4,9 @@
 package io.ceze.einar;
 
 
+import io.ceze.einar.tables.Locations;
 import io.ceze.einar.tables.Profiles;
+import io.ceze.einar.tables.Spaces;
 import io.ceze.einar.tables.Users;
 
 import java.util.Arrays;
@@ -29,9 +31,19 @@ public class Public extends SchemaImpl {
     public static final Public PUBLIC = new Public();
 
     /**
+     * The table <code>public.locations</code>.
+     */
+    public final Locations LOCATIONS = Locations.LOCATIONS;
+
+    /**
      * The table <code>public.profiles</code>.
      */
     public final Profiles PROFILES = Profiles.PROFILES;
+
+    /**
+     * The table <code>public.spaces</code>.
+     */
+    public final Spaces SPACES = Spaces.SPACES;
 
     /**
      * The table <code>public.users</code>.
@@ -54,7 +66,9 @@ public class Public extends SchemaImpl {
     @Override
     public final List<Table<?>> getTables() {
         return Arrays.asList(
+            Locations.LOCATIONS,
             Profiles.PROFILES,
+            Spaces.SPACES,
             Users.USERS
         );
     }

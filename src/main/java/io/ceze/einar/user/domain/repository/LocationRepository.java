@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.ceze.einar.user.web.controller.dto;
+package io.ceze.einar.user.domain.repository;
 
-import java.time.LocalDateTime;
+import io.ceze.einar.user.domain.model.Location;
+import io.ceze.einar.util.data.AbstractRepository;
 
-public record ProfileRequest(String firstName, String lastName, LocalDateTime dateOfBirth) {}
+public interface LocationRepository extends AbstractRepository<Location, Long> {}

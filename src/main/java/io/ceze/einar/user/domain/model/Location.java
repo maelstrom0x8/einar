@@ -15,7 +15,7 @@
  */
 package io.ceze.einar.user.domain.model;
 
-public class Address {
+public class Location {
 
     private Integer streetNumber;
     private String street;
@@ -24,9 +24,9 @@ public class Address {
     private String postalCode;
     private String country;
 
-    public Address() {}
+    public Location() {}
 
-    public Address(
+    public Location(
             Integer streetNumber,
             String street,
             String city,
@@ -91,7 +91,7 @@ public class Address {
 
     @Override
     public String toString() {
-        return "Address{"
+        return "Location{"
                 + "streetNumber='"
                 + streetNumber
                 + '\''

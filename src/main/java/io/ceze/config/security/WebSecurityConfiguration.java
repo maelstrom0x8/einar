@@ -15,13 +15,22 @@
  */
 package io.ceze.config.security;
 
+import io.ceze.config.resolvers.AuthenticatedUserResolver;
+import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-public class WebSecurityConfiguration {
+public class WebSecurityConfiguration implements WebMvcConfigurer {
+
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+        resolvers.add(new AuthenticatedUserResolver());
+    }
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -32,7 +41,6 @@ public class WebSecurityConfiguration {
                                     jwt.jwtAuthenticationConverter(
                                             new DefaultJwtAuthenticationTokenConverter());
                                 }));
-
         http.authorizeHttpRequests(requests -> requests.anyRequest().permitAll());
 
         return http.build();

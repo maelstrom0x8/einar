@@ -28,7 +28,7 @@ public class Profile implements Serializable {
     private LocalDateTime createdAt;
     private LocalDateTime lastModified;
     private LocalDate dateOfBirth;
-    private Address address;
+    private Location location;
 
     public Profile() {}
 
@@ -39,14 +39,14 @@ public class Profile implements Serializable {
             LocalDateTime createdAt,
             LocalDateTime lastModified,
             LocalDate dateOfBirth,
-            Address address) {
+            Location location) {
         this.user = user;
         this.firstName = firstName;
         this.lastName = lastName;
         this.createdAt = createdAt;
         this.lastModified = lastModified;
         this.dateOfBirth = dateOfBirth;
-        this.address = address;
+        this.location = location;
     }
 
     public Long getId() {
@@ -105,11 +105,13 @@ public class Profile implements Serializable {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public Address getAddress() {
-        return address;
+    public Location getLocation() {
+        return location;
     }
 
-    public void setAddress(Address address) {
-        this.address = address;
+    public void setLocation(Location location) {
+        this.location = location;
     }
+
+    //    @TODO: Check for profile completeness
 }

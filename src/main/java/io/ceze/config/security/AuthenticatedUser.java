@@ -13,15 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.ceze.einar.user.web.controller.dto;
+package io.ceze.config.security;
 
-import java.time.LocalDateTime;
+import jakarta.validation.constraints.NotNull;
 
-public record ProfileResponse(
-        Long profileId,
-        String firstName,
-        String lastName,
-        String email,
-        LocalDateTime dateOfBirth,
-        LocalDateTime created,
-        LocalDateTime lastModified) {}
+public record AuthenticatedUser(@NotNull String subject, java.util.Map<String, Object> claims) {}

@@ -16,11 +16,12 @@ import java.util.function.Function;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
-import org.jooq.Function13;
+import org.jooq.Function8;
+import org.jooq.Identity;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Records;
-import org.jooq.Row13;
+import org.jooq.Row8;
 import org.jooq.Schema;
 import org.jooq.SelectField;
 import org.jooq.Table;
@@ -56,12 +57,17 @@ public class Profiles extends TableImpl<ProfilesRecord> {
     /**
      * The column <code>public.profiles.profile_id</code>.
      */
-    public final TableField<ProfilesRecord, Long> PROFILE_ID = createField(DSL.name("profile_id"), SQLDataType.BIGINT.nullable(false), this, "");
+    public final TableField<ProfilesRecord, Long> PROFILE_ID = createField(DSL.name("profile_id"), SQLDataType.BIGINT.nullable(false).identity(true), this, "");
 
     /**
      * The column <code>public.profiles.user_id</code>.
      */
     public final TableField<ProfilesRecord, Long> USER_ID = createField(DSL.name("user_id"), SQLDataType.BIGINT.nullable(false), this, "");
+
+    /**
+     * The column <code>public.profiles.location_id</code>.
+     */
+    public final TableField<ProfilesRecord, Long> LOCATION_ID = createField(DSL.name("location_id"), SQLDataType.BIGINT, this, "");
 
     /**
      * The column <code>public.profiles.first_name</code>.
@@ -77,36 +83,6 @@ public class Profiles extends TableImpl<ProfilesRecord> {
      * The column <code>public.profiles.dob</code>.
      */
     public final TableField<ProfilesRecord, LocalDate> DOB = createField(DSL.name("dob"), SQLDataType.LOCALDATE, this, "");
-
-    /**
-     * The column <code>public.profiles.street_no</code>.
-     */
-    public final TableField<ProfilesRecord, Integer> STREET_NO = createField(DSL.name("street_no"), SQLDataType.INTEGER, this, "");
-
-    /**
-     * The column <code>public.profiles.street_name</code>.
-     */
-    public final TableField<ProfilesRecord, String> STREET_NAME = createField(DSL.name("street_name"), SQLDataType.VARCHAR(255).nullable(false), this, "");
-
-    /**
-     * The column <code>public.profiles.city</code>.
-     */
-    public final TableField<ProfilesRecord, String> CITY = createField(DSL.name("city"), SQLDataType.VARCHAR(100).nullable(false), this, "");
-
-    /**
-     * The column <code>public.profiles.state</code>.
-     */
-    public final TableField<ProfilesRecord, String> STATE = createField(DSL.name("state"), SQLDataType.VARCHAR(100), this, "");
-
-    /**
-     * The column <code>public.profiles.postal_code</code>.
-     */
-    public final TableField<ProfilesRecord, String> POSTAL_CODE = createField(DSL.name("postal_code"), SQLDataType.VARCHAR(20).nullable(false), this, "");
-
-    /**
-     * The column <code>public.profiles.country</code>.
-     */
-    public final TableField<ProfilesRecord, String> COUNTRY = createField(DSL.name("country"), SQLDataType.CHAR(2).nullable(false), this, "");
 
     /**
      * The column <code>public.profiles.created_at</code>.
@@ -157,16 +133,22 @@ public class Profiles extends TableImpl<ProfilesRecord> {
     }
 
     @Override
+    public Identity<ProfilesRecord, Long> getIdentity() {
+        return (Identity<ProfilesRecord, Long>) super.getIdentity();
+    }
+
+    @Override
     public UniqueKey<ProfilesRecord> getPrimaryKey() {
         return Keys.PROFILES_PKEY;
     }
 
     @Override
     public List<ForeignKey<ProfilesRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.PROFILES__PROFILES_USER_ID_FKEY);
+        return Arrays.asList(Keys.PROFILES__PROFILES_USER_ID_FKEY, Keys.PROFILES__PROFILES_LOCATION_ID_FKEY);
     }
 
     private transient Users _users;
+    private transient Locations _locations;
 
     /**
      * Get the implicit join path to the <code>public.users</code> table.
@@ -176,6 +158,16 @@ public class Profiles extends TableImpl<ProfilesRecord> {
             _users = new Users(this, Keys.PROFILES__PROFILES_USER_ID_FKEY);
 
         return _users;
+    }
+
+    /**
+     * Get the implicit join path to the <code>public.locations</code> table.
+     */
+    public Locations locations() {
+        if (_locations == null)
+            _locations = new Locations(this, Keys.PROFILES__PROFILES_LOCATION_ID_FKEY);
+
+        return _locations;
     }
 
     @Override
@@ -218,18 +210,18 @@ public class Profiles extends TableImpl<ProfilesRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row13 type methods
+    // Row8 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row13<Long, Long, String, String, LocalDate, Integer, String, String, String, String, String, LocalDateTime, LocalDateTime> fieldsRow() {
-        return (Row13) super.fieldsRow();
+    public Row8<Long, Long, Long, String, String, LocalDate, LocalDateTime, LocalDateTime> fieldsRow() {
+        return (Row8) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function13<? super Long, ? super Long, ? super String, ? super String, ? super LocalDate, ? super Integer, ? super String, ? super String, ? super String, ? super String, ? super String, ? super LocalDateTime, ? super LocalDateTime, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function8<? super Long, ? super Long, ? super Long, ? super String, ? super String, ? super LocalDate, ? super LocalDateTime, ? super LocalDateTime, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -237,7 +229,7 @@ public class Profiles extends TableImpl<ProfilesRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function13<? super Long, ? super Long, ? super String, ? super String, ? super LocalDate, ? super Integer, ? super String, ? super String, ? super String, ? super String, ? super String, ? super LocalDateTime, ? super LocalDateTime, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function8<? super Long, ? super Long, ? super Long, ? super String, ? super String, ? super LocalDate, ? super LocalDateTime, ? super LocalDateTime, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

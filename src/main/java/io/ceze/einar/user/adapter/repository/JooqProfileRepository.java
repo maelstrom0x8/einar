@@ -20,7 +20,7 @@ import static io.ceze.einar.tables.Users.USERS;
 import static org.jooq.impl.DSL.asterisk;
 
 import io.ceze.einar.tables.records.ProfilesRecord;
-import io.ceze.einar.user.domain.model.Address;
+import io.ceze.einar.user.domain.model.Location;
 import io.ceze.einar.user.domain.model.Profile;
 import io.ceze.einar.user.domain.model.User;
 import io.ceze.einar.user.domain.repository.ProfileRepository;
@@ -63,12 +63,12 @@ class JooqProfileRepository implements ProfileRepository {
                 .set(PROFILES.FIRST_NAME, profile.getFirstName())
                 .set(PROFILES.LAST_NAME, profile.getLastName())
                 .set(PROFILES.DOB, profile.getDateOfBirth())
-                .set(PROFILES.STREET_NO, profile.getAddress().getStreetNumber())
-                .set(PROFILES.STREET_NAME, profile.getAddress().getStreet())
-                .set(PROFILES.CITY, profile.getAddress().getCity())
-                .set(PROFILES.STATE, profile.getAddress().getState())
-                .set(PROFILES.POSTAL_CODE, profile.getAddress().getPostalCode())
-                .set(PROFILES.COUNTRY, profile.getAddress().getCountry())
+                //                .set(PROFILES.STREET_NO, profile.getAddress().getStreetNumber())
+                //                .set(PROFILES.STREET_NAME, profile.getAddress().getStreet())
+                //                .set(PROFILES.CITY, profile.getAddress().getCity())
+                //                .set(PROFILES.STATE, profile.getAddress().getState())
+                //                .set(PROFILES.POSTAL_CODE, profile.getAddress().getPostalCode())
+                //                .set(PROFILES.COUNTRY, profile.getAddress().getCountry())
                 .set(PROFILES.LAST_MODIFIED, LocalDateTime.now())
                 .where(PROFILES.USER_ID.eq(profile.getUser().getId()))
                 .execute();
@@ -84,12 +84,12 @@ class JooqProfileRepository implements ProfileRepository {
                 .set(PROFILES.FIRST_NAME, profile.getFirstName())
                 .set(PROFILES.LAST_NAME, profile.getLastName())
                 .set(PROFILES.DOB, profile.getDateOfBirth())
-                .set(PROFILES.STREET_NO, profile.getAddress().getStreetNumber())
-                .set(PROFILES.STREET_NAME, profile.getAddress().getStreet())
-                .set(PROFILES.CITY, profile.getAddress().getCity())
-                .set(PROFILES.STATE, profile.getAddress().getState())
-                .set(PROFILES.POSTAL_CODE, profile.getAddress().getPostalCode())
-                .set(PROFILES.COUNTRY, profile.getAddress().getCountry())
+                //                .set(PROFILES, profile.getAddress().getStreetNumber())
+                //                .set(PROFILES.STREET_NAME, profile.getAddress().getStreet())
+                //                .set(PROFILES.CITY, profile.getAddress().getCity())
+                //                .set(PROFILES.STATE, profile.getAddress().getState())
+                //                .set(PROFILES.POSTAL_CODE, profile.getAddress().getPostalCode())
+                //                .set(PROFILES.COUNTRY, profile.getAddress().getCountry())
                 .set(PROFILES.CREATED_AT, LocalDateTime.now())
                 .set(PROFILES.LAST_MODIFIED, LocalDateTime.now())
                 .execute();
@@ -146,16 +146,16 @@ class JooqProfileRepository implements ProfileRepository {
             User user = new User();
             user.setId(record.get(PROFILES.USER_ID));
 
-            Address address = new Address();
-            address.setStreetNumber(record.get(PROFILES.STREET_NO));
-            address.setStreet(record.get(PROFILES.STREET_NAME));
-            address.setCity(record.get(PROFILES.CITY));
-            address.setState(record.get(PROFILES.STATE));
-            address.setPostalCode(record.get(PROFILES.POSTAL_CODE));
-            address.setCountry(record.get(PROFILES.COUNTRY));
+            Location location = new Location();
+            //            location.setStreetNumber(record.get(PROFILES.STREET_NO));
+            //            location.setStreet(record.get(PROFILES.STREET_NAME));
+            //            location.setCity(record.get(PROFILES.CITY));
+            //            location.setState(record.get(PROFILES.STATE));
+            //            location.setPostalCode(record.get(PROFILES.POSTAL_CODE));
+            //            location.setCountry(record.get(PROFILES.COUNTRY));
 
             profile.setUser(user);
-            profile.setAddress(address);
+            profile.setLocation(location);
             return profile;
         };
     }
@@ -179,16 +179,16 @@ class JooqProfileRepository implements ProfileRepository {
             User user = new User();
             user.setId(record.getUserId());
 
-            Address address = new Address();
-            address.setStreetNumber(record.getStreetNo());
-            address.setStreet(record.getStreetName());
-            address.setCity(record.getCity());
-            address.setState(record.getState());
-            address.setPostalCode(record.getPostalCode());
-            address.setCountry(record.getCountry());
+            Location location = new Location();
+            //            location.setStreetNumber(record.getStreetNo());
+            //            location.setStreet(record.getStreetName());
+            //            location.setCity(record.getCity());
+            //            location.setState(record.getState());
+            //            location.setPostalCode(record.getPostalCode());
+            //            location.setCountry(record.getCountry());
 
             profile.setUser(user);
-            profile.setAddress(address);
+            profile.setLocation(location);
             return profile;
         }
     }

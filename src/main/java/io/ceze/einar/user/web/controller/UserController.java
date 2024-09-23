@@ -15,9 +15,11 @@
  */
 package io.ceze.einar.user.web.controller;
 
+import io.ceze.config.security.Authenticated;
+import io.ceze.einar.user.domain.dto.ProfileRequest;
+import io.ceze.einar.user.domain.dto.ProfileResponse;
+import io.ceze.einar.user.domain.model.User;
 import io.ceze.einar.user.domain.service.UserService;
-import io.ceze.einar.user.web.controller.dto.ProfileRequest;
-import io.ceze.einar.user.web.controller.dto.ProfileResponse;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -37,5 +39,10 @@ public class UserController {
     public ProfileResponse updateProfile(
             @PathVariable("profile_id") Long profileId, ProfileRequest request) {
         return null;
+    }
+
+    @DeleteMapping
+    public void deleteAccount(@Authenticated User user) {
+        userService.deleteAccount(user);
     }
 }
