@@ -13,15 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.ceze.einar;
+package io.ceze.einar.util.data.mapper;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-@SpringBootApplication(scanBasePackages = "io.ceze")
-public class Application {
-
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
-    }
-}
+public class UserRecordMapper extends ObjectMapper {}

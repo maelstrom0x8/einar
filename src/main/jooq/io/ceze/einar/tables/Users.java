@@ -8,16 +8,19 @@ import io.ceze.einar.Keys;
 import io.ceze.einar.Public;
 import io.ceze.einar.tables.records.UsersRecord;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Function;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
-import org.jooq.Function3;
+import org.jooq.Function6;
 import org.jooq.Identity;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Records;
-import org.jooq.Row3;
+import org.jooq.Row6;
 import org.jooq.Schema;
 import org.jooq.SelectField;
 import org.jooq.Table;
@@ -53,17 +56,32 @@ public class Users extends TableImpl<UsersRecord> {
     /**
      * The column <code>public.users.user_id</code>.
      */
-    public final TableField<UsersRecord, Integer> USER_ID = createField(DSL.name("user_id"), SQLDataType.INTEGER.nullable(false).identity(true), this, "");
+    public final TableField<UsersRecord, Long> USER_ID = createField(DSL.name("user_id"), SQLDataType.BIGINT.nullable(false).identity(true), this, "");
 
     /**
-     * The column <code>public.users.username</code>.
+     * The column <code>public.users.created_at</code>.
      */
-    public final TableField<UsersRecord, String> USERNAME = createField(DSL.name("username"), SQLDataType.VARCHAR(16), this, "");
+    public final TableField<UsersRecord, LocalDateTime> CREATED_AT = createField(DSL.name("created_at"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("CURRENT_TIMESTAMP"), SQLDataType.LOCALDATETIME)), this, "");
+
+    /**
+     * The column <code>public.users.last_modified</code>.
+     */
+    public final TableField<UsersRecord, LocalDateTime> LAST_MODIFIED = createField(DSL.name("last_modified"), SQLDataType.LOCALDATETIME(6).nullable(false), this, "");
+
+    /**
+     * The column <code>public.users.active</code>.
+     */
+    public final TableField<UsersRecord, Boolean> ACTIVE = createField(DSL.name("active"), SQLDataType.BOOLEAN.defaultValue(DSL.field(DSL.raw("true"), SQLDataType.BOOLEAN)), this, "");
+
+    /**
+     * The column <code>public.users.verified</code>.
+     */
+    public final TableField<UsersRecord, Boolean> VERIFIED = createField(DSL.name("verified"), SQLDataType.BOOLEAN.defaultValue(DSL.field(DSL.raw("false"), SQLDataType.BOOLEAN)), this, "");
 
     /**
      * The column <code>public.users.email</code>.
      */
-    public final TableField<UsersRecord, String> EMAIL = createField(DSL.name("email"), SQLDataType.VARCHAR(100).nullable(false), this, "");
+    public final TableField<UsersRecord, String> EMAIL = createField(DSL.name("email"), SQLDataType.VARCHAR(200).nullable(false), this, "");
 
     private Users(Name alias, Table<UsersRecord> aliased) {
         this(alias, aliased, null);
@@ -104,13 +122,18 @@ public class Users extends TableImpl<UsersRecord> {
     }
 
     @Override
-    public Identity<UsersRecord, Integer> getIdentity() {
-        return (Identity<UsersRecord, Integer>) super.getIdentity();
+    public Identity<UsersRecord, Long> getIdentity() {
+        return (Identity<UsersRecord, Long>) super.getIdentity();
     }
 
     @Override
     public UniqueKey<UsersRecord> getPrimaryKey() {
         return Keys.USERS_PKEY;
+    }
+
+    @Override
+    public List<UniqueKey<UsersRecord>> getUniqueKeys() {
+        return Arrays.asList(Keys.USERS_EMAIL_KEY);
     }
 
     @Override
@@ -153,18 +176,18 @@ public class Users extends TableImpl<UsersRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row3 type methods
+    // Row6 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row3<Integer, String, String> fieldsRow() {
-        return (Row3) super.fieldsRow();
+    public Row6<Long, LocalDateTime, LocalDateTime, Boolean, Boolean, String> fieldsRow() {
+        return (Row6) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function3<? super Integer, ? super String, ? super String, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function6<? super Long, ? super LocalDateTime, ? super LocalDateTime, ? super Boolean, ? super Boolean, ? super String, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -172,7 +195,7 @@ public class Users extends TableImpl<UsersRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function3<? super Integer, ? super String, ? super String, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function6<? super Long, ? super LocalDateTime, ? super LocalDateTime, ? super Boolean, ? super Boolean, ? super String, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

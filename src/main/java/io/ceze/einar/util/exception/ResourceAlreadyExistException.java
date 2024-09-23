@@ -13,15 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.ceze.einar;
+package io.ceze.einar.util.exception;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+public class ResourceAlreadyExistException extends RuntimeException {
 
-@SpringBootApplication(scanBasePackages = "io.ceze")
-public class Application {
+    public ResourceAlreadyExistException(Class<?> resourceType, Object id) {
+        this(
+                String.format(
+                        "The %s identified with %s already exists",
+                        resourceType.getName(), id.toString()));
+    }
 
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+    public ResourceAlreadyExistException(String message) {
+        super(message);
     }
 }

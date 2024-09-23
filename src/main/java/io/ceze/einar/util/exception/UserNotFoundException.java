@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.ceze.einar;
+package io.ceze.einar.util.exception;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+public class UserNotFoundException extends RuntimeException {
+    public UserNotFoundException() {
+        super();
+    }
 
-@SpringBootApplication(scanBasePackages = "io.ceze")
-public class Application {
-
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+    public UserNotFoundException(String message) {
+        super(message);
     }
 }

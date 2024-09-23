@@ -13,15 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.ceze.einar;
+package io.ceze.config.security;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import java.util.Collection;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
-@SpringBootApplication(scanBasePackages = "io.ceze")
-public class Application {
+public class CustomJwtAuthenticationToken extends JwtAuthenticationToken {
 
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+    public CustomJwtAuthenticationToken(
+            Jwt jwt, Collection<? extends GrantedAuthority> authorities) {
+        super(jwt, authorities);
     }
 }

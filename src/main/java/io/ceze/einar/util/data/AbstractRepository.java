@@ -13,15 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.ceze.einar;
+package io.ceze.einar.util.data;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import java.util.List;
+import java.util.Optional;
 
-@SpringBootApplication(scanBasePackages = "io.ceze")
-public class Application {
+public interface AbstractRepository<T, ID> {
 
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
-    }
+    T save(T t);
+
+    Optional<T> findById(ID id);
+
+    void delete(T t);
+
+    void deleteById(ID id);
+
+    List<T> findAll();
+
+    boolean existsById(ID id);
+
+    int count();
 }

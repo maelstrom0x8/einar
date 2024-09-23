@@ -4,13 +4,9 @@
 package io.ceze.einar;
 
 
-import io.ceze.einar.tables.Addresses;
-import io.ceze.einar.tables.Apartments;
-import io.ceze.einar.tables.Negotiation;
+import io.ceze.einar.tables.Profiles;
 import io.ceze.einar.tables.Users;
-import io.ceze.einar.tables.records.AddressesRecord;
-import io.ceze.einar.tables.records.ApartmentsRecord;
-import io.ceze.einar.tables.records.NegotiationRecord;
+import io.ceze.einar.tables.records.ProfilesRecord;
 import io.ceze.einar.tables.records.UsersRecord;
 
 import org.jooq.ForeignKey;
@@ -31,16 +27,13 @@ public class Keys {
     // UNIQUE and PRIMARY KEY definitions
     // -------------------------------------------------------------------------
 
-    public static final UniqueKey<AddressesRecord> ADDRESSES_ADDR_NUM_STREET_CITY_KEY = Internal.createUniqueKey(Addresses.ADDRESSES, DSL.name("addresses_addr_num_street_city_key"), new TableField[] { Addresses.ADDRESSES.ADDR_NUM, Addresses.ADDRESSES.STREET, Addresses.ADDRESSES.CITY }, true);
-    public static final UniqueKey<AddressesRecord> ADDRESSES_PKEY = Internal.createUniqueKey(Addresses.ADDRESSES, DSL.name("addresses_pkey"), new TableField[] { Addresses.ADDRESSES.ADDR_ID }, true);
-    public static final UniqueKey<ApartmentsRecord> APARTMENTS_PKEY = Internal.createUniqueKey(Apartments.APARTMENTS, DSL.name("apartments_pkey"), new TableField[] { Apartments.APARTMENTS.APT_ID }, true);
-    public static final UniqueKey<NegotiationRecord> NEGOTIATION_PKEY = Internal.createUniqueKey(Negotiation.NEGOTIATION, DSL.name("negotiation_pkey"), new TableField[] { Negotiation.NEGOTIATION.ID }, true);
+    public static final UniqueKey<ProfilesRecord> PROFILES_PKEY = Internal.createUniqueKey(Profiles.PROFILES, DSL.name("profiles_pkey"), new TableField[] { Profiles.PROFILES.PROFILE_ID }, true);
+    public static final UniqueKey<UsersRecord> USERS_EMAIL_KEY = Internal.createUniqueKey(Users.USERS, DSL.name("users_email_key"), new TableField[] { Users.USERS.EMAIL }, true);
     public static final UniqueKey<UsersRecord> USERS_PKEY = Internal.createUniqueKey(Users.USERS, DSL.name("users_pkey"), new TableField[] { Users.USERS.USER_ID }, true);
 
     // -------------------------------------------------------------------------
     // FOREIGN KEY definitions
     // -------------------------------------------------------------------------
 
-    public static final ForeignKey<ApartmentsRecord, AddressesRecord> APARTMENTS__APARTMENTS_ADDRESS_ID_FKEY = Internal.createForeignKey(Apartments.APARTMENTS, DSL.name("apartments_address_id_fkey"), new TableField[] { Apartments.APARTMENTS.ADDRESS_ID }, Keys.ADDRESSES_PKEY, new TableField[] { Addresses.ADDRESSES.ADDR_ID }, true);
-    public static final ForeignKey<ApartmentsRecord, UsersRecord> APARTMENTS__APARTMENTS_OWNER_ID_FKEY = Internal.createForeignKey(Apartments.APARTMENTS, DSL.name("apartments_owner_id_fkey"), new TableField[] { Apartments.APARTMENTS.OWNER_ID }, Keys.USERS_PKEY, new TableField[] { Users.USERS.USER_ID }, true);
+    public static final ForeignKey<ProfilesRecord, UsersRecord> PROFILES__PROFILES_USER_ID_FKEY = Internal.createForeignKey(Profiles.PROFILES, DSL.name("profiles_user_id_fkey"), new TableField[] { Profiles.PROFILES.USER_ID }, Keys.USERS_PKEY, new TableField[] { Users.USERS.USER_ID }, true);
 }

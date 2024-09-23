@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.ceze.einar;
+package io.ceze.einar.user.domain.repository;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import io.ceze.einar.user.domain.model.Profile;
+import io.ceze.einar.util.data.AbstractRepository;
+import java.util.Optional;
 
-@SpringBootApplication(scanBasePackages = "io.ceze")
-public class Application {
+public interface ProfileRepository extends AbstractRepository<Profile, Long> {
 
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
-    }
+    Optional<Profile> findByUserId(Long userId);
+
+    Profile update(Profile profile);
 }

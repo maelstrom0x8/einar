@@ -4,9 +4,7 @@
 package io.ceze.einar;
 
 
-import io.ceze.einar.tables.Addresses;
-import io.ceze.einar.tables.Apartments;
-import io.ceze.einar.tables.Negotiation;
+import io.ceze.einar.tables.Profiles;
 import io.ceze.einar.tables.Users;
 
 import java.util.Arrays;
@@ -31,19 +29,9 @@ public class Public extends SchemaImpl {
     public static final Public PUBLIC = new Public();
 
     /**
-     * The table <code>public.addresses</code>.
+     * The table <code>public.profiles</code>.
      */
-    public final Addresses ADDRESSES = Addresses.ADDRESSES;
-
-    /**
-     * The table <code>public.apartments</code>.
-     */
-    public final Apartments APARTMENTS = Apartments.APARTMENTS;
-
-    /**
-     * The table <code>public.negotiation</code>.
-     */
-    public final Negotiation NEGOTIATION = Negotiation.NEGOTIATION;
+    public final Profiles PROFILES = Profiles.PROFILES;
 
     /**
      * The table <code>public.users</code>.
@@ -66,9 +54,7 @@ public class Public extends SchemaImpl {
     @Override
     public final List<Table<?>> getTables() {
         return Arrays.asList(
-            Addresses.ADDRESSES,
-            Apartments.APARTMENTS,
-            Negotiation.NEGOTIATION,
+            Profiles.PROFILES,
             Users.USERS
         );
     }

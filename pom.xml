@@ -15,8 +15,7 @@
         <sonar.version>3.9.1.2184</sonar.version>
         <flyway-core.version>10.0.0</flyway-core.version>
         <spring-modulith.version>1.2.1</spring-modulith.version>
-                        <spotless-maven-plugin.version>2.43.0</spotless-maven-plugin.version>
-
+        <spotless-maven-plugin.version>2.43.0</spotless-maven-plugin.version>
         <testcontainers-jooq-codegen-maven-plugin.version>0.0.2</testcontainers-jooq-codegen-maven-plugin.version>
     </properties>
 
@@ -51,8 +50,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jooq</artifactId>
@@ -70,8 +67,6 @@
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-database-postgresql</artifactId>
         </dependency>
-
-        <!--        Devtools-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-docker-compose</artifactId>
@@ -80,6 +75,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.modulith</groupId>
@@ -112,50 +111,50 @@
     <build>
         <defaultGoal>spring-boot:run</defaultGoal>
         <plugins>
-                       <plugin>
-                                <groupId>org.springframework.boot</groupId>
-                                <artifactId>spring-boot-maven-plugin</artifactId>
-                                <configuration>
-                                        <image>
-                                                <builder>dashaun/builder:tiny</builder>
-                                                <createdDate>now</createdDate>
-                                                <name>maelstrom0x8/${project.artifactId}:v${project.version}</name>
-                                        </image>
-                                </configuration>
-                        </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <image>
+                        <builder>dashaun/builder:tiny</builder>
+                        <createdDate>now</createdDate>
+                        <name>maelstrom0x8/${project.artifactId}:v${project.version}</name>
+                    </image>
+                </configuration>
+            </plugin>
 
-                        <plugin>
-                                <groupId>com.diffplug.spotless</groupId>
-                                <artifactId>spotless-maven-plugin</artifactId>
-                                <version>${spotless-maven-plugin.version}</version>
-                                <configuration>
-                                        <ratchetFrom>origin/main</ratchetFrom>
-                                        <java>
-                                                <importOrder>
-                                                        <order>java|jakarta,org,com,io.ceze\#</order>
-                                                </importOrder>
-                                                <removeUnusedImports />
-                                                <googleJavaFormat>
-                                                        <version>1.17.0</version>
-                                                        <style>AOSP</style>
-                                                        <reflowLongStrings>true</reflowLongStrings>
-                                                        <formatJavadoc>false</formatJavadoc>
-                                                </googleJavaFormat>
-                                                <licenseHeader>
-                                                        <file>.mvn/spotless.java.license.txt</file>
-                                                </licenseHeader>
-                                                <formatAnnotations />
-                                        </java>
-                                </configuration>
-                                <executions>
-                                        <execution>
-                                                <phase>compile</phase>
-                                                <goals>
-                                                        <goal>check</goal>
-                                                </goals>
-                                        </execution>
-                                </executions>
-                        </plugin>
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>${spotless-maven-plugin.version}</version>
+                <configuration>
+                    <ratchetFrom>origin/main</ratchetFrom>
+                    <java>
+                        <importOrder>
+                            <order>java|jakarta,org,com,io.ceze\#</order>
+                        </importOrder>
+                        <removeUnusedImports/>
+                        <googleJavaFormat>
+                            <version>1.17.0</version>
+                            <style>AOSP</style>
+                            <reflowLongStrings>true</reflowLongStrings>
+                            <formatJavadoc>false</formatJavadoc>
+                        </googleJavaFormat>
+                        <licenseHeader>
+                            <file>.mvn/spotless.java.license.txt</file>
+                        </licenseHeader>
+                        <formatAnnotations/>
+                    </java>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -175,7 +174,7 @@
                     <dependency>
                         <groupId>org.testcontainers</groupId>
                         <artifactId>postgresql</artifactId>
-                        <version>1.19.7</version>
+                        <version>1.19.8</version>
                     </dependency>
                     <dependency>
                         <groupId>org.postgresql</groupId>

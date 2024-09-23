@@ -4,9 +4,7 @@
 package io.ceze.einar;
 
 
-import io.ceze.einar.tables.Addresses;
-import io.ceze.einar.tables.Apartments;
-import io.ceze.einar.tables.Negotiation;
+import io.ceze.einar.tables.Profiles;
 import io.ceze.einar.tables.Users;
 
 
@@ -17,19 +15,9 @@ import io.ceze.einar.tables.Users;
 public class Tables {
 
     /**
-     * The table <code>public.addresses</code>.
+     * The table <code>public.profiles</code>.
      */
-    public static final Addresses ADDRESSES = Addresses.ADDRESSES;
-
-    /**
-     * The table <code>public.apartments</code>.
-     */
-    public static final Apartments APARTMENTS = Apartments.APARTMENTS;
-
-    /**
-     * The table <code>public.negotiation</code>.
-     */
-    public static final Negotiation NEGOTIATION = Negotiation.NEGOTIATION;
+    public static final Profiles PROFILES = Profiles.PROFILES;
 
     /**
      * The table <code>public.users</code>.
