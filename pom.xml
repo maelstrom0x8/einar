@@ -129,7 +129,7 @@
                                 <artifactId>spotless-maven-plugin</artifactId>
                                 <version>${spotless-maven-plugin.version}</version>
                                 <configuration>
-                                        <ratchetFrom>origin/master</ratchetFrom>
+                                        <ratchetFrom>origin/main</ratchetFrom>
                                         <java>
                                                 <importOrder>
                                                         <order>java|jakarta,org,com,io.ceze\#</order>
