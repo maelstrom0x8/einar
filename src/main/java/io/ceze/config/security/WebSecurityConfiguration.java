@@ -15,11 +15,13 @@
  */
 package io.ceze.config.security;
 
-import io.ceze.config.resolvers.AuthenticatedUserResolver;
+import io.ceze.config.web.resolvers.AuthenticatedUserResolver;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.CorsConfigurer;
+import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -27,20 +29,26 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebSecurityConfiguration implements WebMvcConfigurer {
 
+    public AuthenticationService einarSecurityManager() {
+        return new AuthenticationService();
+    }
+
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(new AuthenticatedUserResolver());
+        resolvers.add(new AuthenticatedUserResolver(einarSecurityManager()));
     }
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+        http.csrf(CsrfConfigurer::disable).cors(CorsConfigurer::disable);
+
         http.oauth2ResourceServer(
                 server ->
                         server.jwt(
-                                jwt -> {
-                                    jwt.jwtAuthenticationConverter(
-                                            new DefaultJwtAuthenticationTokenConverter());
-                                }));
+                                jwt ->
+                                        jwt.jwtAuthenticationConverter(
+                                                new DefaultJwtAuthenticationTokenConverter())));
         http.authorizeHttpRequests(requests -> requests.anyRequest().permitAll());
 
         return http.build();

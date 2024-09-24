@@ -20,6 +20,9 @@ import io.ceze.einar.user.domain.dto.ProfileRequest;
 import io.ceze.einar.user.domain.dto.ProfileResponse;
 import io.ceze.einar.user.domain.model.User;
 import io.ceze.einar.user.domain.service.UserService;
+import io.ceze.einar.util.exception.ResourceAlreadyExistException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,19 +30,19 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/v1/users")
 public class UserController {
 
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
-    public ResponseEntity<?> registerUser(String email) {
-
-        User user;
+    @PostMapping("/register")
+    public ResponseEntity<Void> registerUser(@Authenticated User user) {
         try {
-            user = userService.create(email);
-            return ResponseEntity.ok(user.getId());
-        } catch (Exception e) {
+            userService.create(user.getEmail());
+            return ResponseEntity.accepted().build();
+        } catch (ResourceAlreadyExistException e) {
             throw new RuntimeException(e);
         }
     }

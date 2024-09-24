@@ -15,7 +15,6 @@
  */
 package io.ceze.einar.space.domain.service;
 
-import io.ceze.config.security.EinarSecurityManager;
 import io.ceze.einar.space.domain.model.dto.NewSpaceRequest;
 import io.ceze.einar.space.domain.repository.SpaceRepository;
 import io.ceze.einar.user.domain.service.UserService;
@@ -26,15 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class SpaceService {
 
-    private final EinarSecurityManager einarSecurityManager;
     private final UserService userService;
     private final SpaceRepository spaceRepository;
 
-    public SpaceService(
-            EinarSecurityManager einarSecurityManager,
-            UserService userService,
-            SpaceRepository spaceRepository) {
-        this.einarSecurityManager = einarSecurityManager;
+    public SpaceService(UserService userService, SpaceRepository spaceRepository) {
         this.userService = userService;
         this.spaceRepository = spaceRepository;
     }

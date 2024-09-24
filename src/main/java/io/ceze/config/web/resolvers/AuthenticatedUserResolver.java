@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.ceze.config.resolvers;
+package io.ceze.config.web.resolvers;
 
 import io.ceze.config.security.Authenticated;
 import io.ceze.config.security.AuthenticatedUser;
-import io.ceze.config.security.EinarSecurityManager;
+import io.ceze.config.security.AuthenticationService;
 import io.ceze.einar.user.domain.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -28,7 +27,11 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 public class AuthenticatedUserResolver implements HandlerMethodArgumentResolver {
 
-    @Autowired private EinarSecurityManager einarSecurityManager;
+    private final AuthenticationService authenticationService;
+
+    public AuthenticatedUserResolver(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
+    }
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -43,7 +46,7 @@ public class AuthenticatedUserResolver implements HandlerMethodArgumentResolver 
             NativeWebRequest webRequest,
             WebDataBinderFactory binderFactory)
             throws Exception {
-        AuthenticatedUser authenticated = einarSecurityManager.authenticated();
+        AuthenticatedUser authenticated = authenticationService.authenticated();
         return new User(authenticated.subject());
     }
 }

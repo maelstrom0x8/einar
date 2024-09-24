@@ -15,7 +15,6 @@
  */
 package io.ceze.einar.user.domain.service;
 
-import io.ceze.config.security.EinarSecurityManager;
 import io.ceze.einar.user.domain.dto.ProfileRequest;
 import io.ceze.einar.user.domain.dto.ProfileResponse;
 import io.ceze.einar.user.domain.model.Location;
@@ -40,17 +39,13 @@ public class UserService {
     private final LocationRepository locationRepository;
     private final ProfileRepository profileRepository;
 
-    private final EinarSecurityManager einarSecurityManager;
-
     public UserService(
             UserRepository userRepository,
             LocationRepository locationRepository,
-            ProfileRepository profileRepository,
-            EinarSecurityManager einarSecurityManager) {
+            ProfileRepository profileRepository) {
         this.userRepository = userRepository;
         this.locationRepository = locationRepository;
         this.profileRepository = profileRepository;
-        this.einarSecurityManager = einarSecurityManager;
     }
 
     public User create(String email) throws ResourceAlreadyExistException {

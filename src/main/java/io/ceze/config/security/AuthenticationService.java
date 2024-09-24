@@ -16,17 +16,11 @@
 package io.ceze.config.security;
 
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.stereotype.Component;
 
-@Component
-public class EinarSecurityManager {
-
-    private static final Logger LOG = LoggerFactory.getLogger(EinarSecurityManager.class);
+public class AuthenticationService {
 
     public AuthenticatedUser authenticated() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
