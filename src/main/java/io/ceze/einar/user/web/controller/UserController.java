@@ -20,6 +20,7 @@ import io.ceze.einar.user.domain.dto.ProfileRequest;
 import io.ceze.einar.user.domain.dto.ProfileResponse;
 import io.ceze.einar.user.domain.model.User;
 import io.ceze.einar.user.domain.service.UserService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -30,6 +31,17 @@ public class UserController {
 
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    public ResponseEntity<?> registerUser(String email) {
+
+        User user;
+        try {
+            user = userService.create(email);
+            return ResponseEntity.ok(user.getId());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @GetMapping("/verify")

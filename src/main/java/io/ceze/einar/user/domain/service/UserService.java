@@ -22,6 +22,7 @@ import io.ceze.einar.user.domain.model.User;
 import io.ceze.einar.user.domain.repository.LocationRepository;
 import io.ceze.einar.user.domain.repository.ProfileRepository;
 import io.ceze.einar.user.domain.repository.UserRepository;
+import io.ceze.einar.util.exception.ResourceAlreadyExistException;
 import io.ceze.einar.util.exception.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,10 +51,12 @@ public class UserService {
         this.einarSecurityManager = einarSecurityManager;
     }
 
-    public User create(String email) {
+    public User create(String email) throws ResourceAlreadyExistException {
         try {
+
             if (userRepository.existsByEmail(email)) {
-                return null;
+                log.error("Duplicates not allowed. User already exists.");
+                throw new ResourceAlreadyExistException(User.class, email);
             }
 
             User user = userRepository.save(new User(email));
@@ -65,6 +68,7 @@ public class UserService {
             log.info("User account for {} created successfully", user.getEmail());
             return user;
         } catch (Exception e) {
+            if (e instanceof ResourceAlreadyExistException) throw e;
             log.error("Unable to save user account. {}", e.getMessage());
         }
         return null;

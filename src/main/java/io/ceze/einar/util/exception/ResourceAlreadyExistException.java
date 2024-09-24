@@ -20,8 +20,8 @@ public class ResourceAlreadyExistException extends RuntimeException {
     public ResourceAlreadyExistException(Class<?> resourceType, Object id) {
         this(
                 String.format(
-                        "The %s identified with %s already exists",
-                        resourceType.getName(), id.toString()));
+                        "The %s identified with '%s' already exists",
+                        resourceType.getSimpleName(), id.toString()));
     }
 
     public ResourceAlreadyExistException(String message) {
