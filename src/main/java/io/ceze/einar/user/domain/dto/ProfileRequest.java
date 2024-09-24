@@ -15,6 +15,20 @@
  */
 package io.ceze.einar.user.domain.dto;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import org.springframework.lang.Nullable;
 
-public record ProfileRequest(String firstName, String lastName, LocalDateTime dateOfBirth) {}
+public record ProfileRequest(
+        String firstName,
+        String lastName,
+        LocalDate dateOfBirth,
+        @Nullable LocationInfo locationInfo) {
+
+    public record LocationInfo(
+            int streetNumber,
+            String streetName,
+            String city,
+            String state,
+            String postalCode,
+            String country) {}
+}

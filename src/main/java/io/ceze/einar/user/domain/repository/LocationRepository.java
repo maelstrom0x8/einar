@@ -18,4 +18,7 @@ package io.ceze.einar.user.domain.repository;
 import io.ceze.einar.user.domain.model.Location;
 import io.ceze.einar.util.data.AbstractRepository;
 
-public interface LocationRepository extends AbstractRepository<Location, Long> {}
+public interface LocationRepository extends AbstractRepository<Location, Long> {
+
+    Location update(Location location);
+}

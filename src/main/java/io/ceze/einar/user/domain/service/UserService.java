@@ -16,6 +16,8 @@
 package io.ceze.einar.user.domain.service;
 
 import io.ceze.config.security.EinarSecurityManager;
+import io.ceze.einar.user.domain.dto.ProfileRequest;
+import io.ceze.einar.user.domain.dto.ProfileResponse;
 import io.ceze.einar.user.domain.model.Location;
 import io.ceze.einar.user.domain.model.Profile;
 import io.ceze.einar.user.domain.model.User;
@@ -78,14 +80,43 @@ public class UserService {
         return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
     }
 
-    public void toggleUserActiveStatus(User user, Long id) {
-        user.setActive(!user.isActive());
+    public void toggleUserActiveStatus(User usr, Long id) throws IllegalAccessException {
+        User user = getUserById(id);
+        if (!usr.getId().equals(user.getId()))
+            throw new IllegalAccessException("Cannot update another account");
+        boolean b = user.isActive();
+        log.info("{} account for {}", b ? "Activating" : "Deactivating", user.getEmail());
+        user.setActive(!b);
         userRepository.update(user);
+        log.info("Account {} {} successfully", user.getEmail(), !b ? "deactivated" : "activated");
     }
 
     /// Deletes the user account and all attached resources.
     /// @param user The current authenticated user
     public void deleteAccount(User user) {
         userRepository.delete(user);
+    }
+
+    public ProfileResponse updateProfile(User user, ProfileRequest request) {
+        Profile profile = profileRepository.findByUserId(user.getId()).orElseThrow();
+        log.info("Updating user profile pf_{}_{}", user.getId(), profile.getId());
+        profile.setFirstName(request.firstName());
+        profile.setLastName(request.lastName());
+        profile.setDateOfBirth(request.dateOfBirth());
+        if (request.locationInfo() != null) {
+            ProfileRequest.LocationInfo info = request.locationInfo();
+            log.info("Updating location details <{}>", user.getEmail());
+            Location location = profile.getLocation();
+            location.setStreetNumber(info.streetNumber());
+            location.setStreet(info.streetName());
+            location.setCity(info.city());
+            location.setState(info.state());
+            location.setCountry(info.country());
+            location.setPostalCode(info.postalCode());
+            var loc = locationRepository.update(location);
+            profile.setLocation(loc);
+        }
+        var pf = profileRepository.update(profile);
+        return ProfileResponse.from(pf);
     }
 }

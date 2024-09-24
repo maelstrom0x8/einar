@@ -53,4 +53,9 @@ class JooqLocationRepository implements LocationRepository {
     public int count() {
         return 0;
     }
+
+    @Override
+    public Location update(Location location) {
+        return null;
+    }
 }

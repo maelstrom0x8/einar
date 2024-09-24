@@ -21,19 +21,22 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import io.ceze.einar.user.domain.dto.ProfileRequest;
+import io.ceze.einar.user.domain.dto.ProfileResponse;
+import io.ceze.einar.user.domain.model.Location;
 import io.ceze.einar.user.domain.model.Profile;
 import io.ceze.einar.user.domain.model.User;
 import io.ceze.einar.user.domain.repository.LocationRepository;
 import io.ceze.einar.user.domain.repository.ProfileRepository;
 import io.ceze.einar.user.domain.repository.UserRepository;
 import io.ceze.einar.util.exception.ResourceAlreadyExistException;
+import java.time.LocalDate;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -82,6 +85,70 @@ class UserServiceTest {
         assertThat(user).isNotNull();
         assertThat(profile1).isNotEmpty();
         assertThat(profile1).map(Profile::getLocation).isNotNull();
+    }
 
+    @Test
+    void userActiveStatusIsUpdated() {
+        User bob = new User("bob@foo.com");
+        bob.setActive(false);
+        bob.setId(1L);
+        User alice = new User("alice@foo.com");
+        alice.setActive(true);
+        alice.setId(2L);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(bob));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(alice));
+
+        assertDoesNotThrow(() -> userService.toggleUserActiveStatus(bob, 1L));
+        assertDoesNotThrow(() -> userService.toggleUserActiveStatus(alice, 2L));
+
+        assertThat(bob.isActive()).isTrue();
+        assertThat(alice.isActive()).isFalse();
+    }
+
+    @Test
+    void exceptionIsThrownWhenUpdatingAnotherUserAccount() {
+        User bob = new User("bob@foo.com");
+        bob.setId(1L);
+
+        User alice = new User("alice@foo.com");
+        alice.setActive(true);
+        alice.setId(2L);
+
+        when(userRepository.findById(2L)).thenReturn(Optional.of(alice));
+
+        assertThatThrownBy(() -> userService.toggleUserActiveStatus(bob, 2L))
+                .isInstanceOf(IllegalAccessException.class);
+    }
+
+    @Test
+    void profileIsUpdatedForExistingUser() {
+        User user = new User("bob@foo.com");
+        user.setId(93873L);
+        Profile profile = new Profile();
+        profile.setId(9204L);
+        profile.setUser(user);
+        profile.setLocation(new Location());
+
+        ProfileRequest request =
+                new ProfileRequest(
+                        "Bob",
+                        "Smith",
+                        LocalDate.of(1989, 4, 8),
+                        new ProfileRequest.LocationInfo(
+                                12, "street-name", "city", "state", "XXXXXX", "JPN"));
+
+        when(userRepository.save(any(User.class))).thenReturn(user);
+        when(profileRepository.save(any(Profile.class))).thenReturn(profile);
+        when(profileRepository.findByUserId(any())).thenReturn(Optional.of(profile));
+        when(profileRepository.update(any(Profile.class))).thenReturn(profile);
+        when(locationRepository.update(any(Location.class))).thenReturn(profile.getLocation());
+
+        User bob = userService.create(user.getEmail());
+
+        ProfileResponse response = userService.updateProfile(bob, request);
+
+        assertThat(response).isNotNull();
+        assertThat(response.firstName()).isEqualTo("Bob");
+        System.out.println(response);
     }
 }
