@@ -25,8 +25,10 @@ import io.ceze.einar.user.domain.repository.ProfileRepository;
 import io.ceze.einar.user.domain.repository.UserRepository;
 import io.ceze.einar.util.exception.ResourceAlreadyExistException;
 import io.ceze.einar.util.exception.UserNotFoundException;
+import io.ceze.events.UserCreated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,36 +41,42 @@ public class UserService {
     private final LocationRepository locationRepository;
     private final ProfileRepository profileRepository;
 
+    private final ApplicationEventPublisher eventPublisher;
+
     public UserService(
             UserRepository userRepository,
             LocationRepository locationRepository,
-            ProfileRepository profileRepository) {
+            ProfileRepository profileRepository,
+            org.springframework.context.ApplicationEventPublisher eventPublisher) {
         this.userRepository = userRepository;
         this.locationRepository = locationRepository;
         this.profileRepository = profileRepository;
+        this.eventPublisher = eventPublisher;
     }
 
-    public User create(String email) throws ResourceAlreadyExistException {
+    public void create(String email) throws ResourceAlreadyExistException {
+        if (userRepository.existsByEmail(email)) {
+            log.error("Duplicates not allowed. User already exists.");
+            throw new ResourceAlreadyExistException(User.class, email);
+        }
+
         try {
-
-            if (userRepository.existsByEmail(email)) {
-                log.error("Duplicates not allowed. User already exists.");
-                throw new ResourceAlreadyExistException(User.class, email);
-            }
-
             User user = userRepository.save(new User(email));
             Location location = locationRepository.save(new Location());
+
             Profile profile = new Profile();
             profile.setUser(user);
             profile.setLocation(location);
             profileRepository.save(profile);
+
             log.info("User account for {} created successfully", user.getEmail());
-            return user;
+            eventPublisher.publishEvent(new UserCreated(email));
+
+        } catch (ResourceAlreadyExistException e) {
+            throw e;
         } catch (Exception e) {
-            if (e instanceof ResourceAlreadyExistException) throw e;
             log.error("Unable to save user account. {}", e.getMessage());
         }
-        return null;
     }
 
     public User getUserById(Long userId) {

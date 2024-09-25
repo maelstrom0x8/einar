@@ -17,8 +17,10 @@ package io.ceze.einar.user.domain.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import io.ceze.einar.user.domain.dto.ProfileRequest;
@@ -30,6 +32,7 @@ import io.ceze.einar.user.domain.repository.LocationRepository;
 import io.ceze.einar.user.domain.repository.ProfileRepository;
 import io.ceze.einar.user.domain.repository.UserRepository;
 import io.ceze.einar.util.exception.ResourceAlreadyExistException;
+import io.ceze.events.UserCreated;
 import java.time.LocalDate;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -37,6 +40,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -49,15 +53,26 @@ class UserServiceTest {
 
     @Mock private LocationRepository locationRepository;
 
+    @Mock private ApplicationEventPublisher eventPublisher;
+
     @Test
     void shouldCreateNewUser() {
         User user = new User("bob@einar.org");
+        Profile profile = new Profile();
+        Location location = new Location();
+
+        when(locationRepository.save(any(Location.class))).thenReturn(location);
+        when(profileRepository.save(any(Profile.class))).thenReturn(profile);
         when(userRepository.save(any(User.class))).thenReturn(user);
 
-        User user1 = userService.create("bob@einar.org");
+        userService.create("bob@einar.org");
 
-        assertThat(user1).isNotNull();
-        assertThat(user1.getEmail()).isEqualTo("bob@einar.org");
+        verify(userRepository).existsByEmail("bob@einar.org");
+        verify(userRepository).save(any(User.class));
+        verify(locationRepository).save(any(Location.class));
+        verify(profileRepository).save(any(Profile.class));
+        verify(eventPublisher).publishEvent(any(UserCreated.class));
+        verify(eventPublisher, times(1)).publishEvent(new UserCreated(user.getEmail()));
     }
 
     @Test
@@ -79,10 +94,10 @@ class UserServiceTest {
         when(profileRepository.save(any(Profile.class))).thenReturn(profile);
         when(profileRepository.findByUserId(any(Long.class))).thenReturn(Optional.of(profile));
 
-        User user = userService.create("alice@foo.com");
+        userService.create("alice@foo.com");
         Optional<Profile> profile1 = profileRepository.findByUserId(323L);
 
-        assertThat(user).isNotNull();
+        // assertThat(user).isNotNull();
         assertThat(profile1).isNotEmpty();
         assertThat(profile1).map(Profile::getLocation).isNotNull();
     }
@@ -143,9 +158,9 @@ class UserServiceTest {
         when(profileRepository.update(any(Profile.class))).thenReturn(profile);
         when(locationRepository.update(any(Location.class))).thenReturn(profile.getLocation());
 
-        User bob = userService.create(user.getEmail());
+        userService.create(user.getEmail());
 
-        ProfileResponse response = userService.updateProfile(bob, request);
+        ProfileResponse response = userService.updateProfile(user, request);
 
         assertThat(response).isNotNull();
         assertThat(response.firstName()).isEqualTo("Bob");
