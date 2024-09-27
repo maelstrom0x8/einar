@@ -13,20 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.ceze.einar;
+package io.ceze.einar.user.domain.repository;
 
-import java.util.Map;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.springframework.context.annotation.Bean;
-import org.testcontainers.containers.PostgreSQLContainer;
+import io.ceze.einar.user.domain.model.Token;
+import io.ceze.einar.util.data.AbstractRepository;
+import java.util.UUID;
 
-@TestConfiguration(proxyBeanMethods = false)
-public class TestcontainersConfig {
-
-    @Bean
-    @ServiceConnection
-    PostgreSQLContainer<?> postgreSQLContainer() {
-        return new PostgreSQLContainer<>("postgres:16").withTmpFs(Map.of("/test/tmpfs", "rw"));
-    }
-}
+public interface TokenRepository extends AbstractRepository<Token, UUID> {}

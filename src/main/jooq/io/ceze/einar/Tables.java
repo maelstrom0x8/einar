@@ -7,6 +7,7 @@ package io.ceze.einar;
 import io.ceze.einar.tables.Locations;
 import io.ceze.einar.tables.Profiles;
 import io.ceze.einar.tables.Spaces;
+import io.ceze.einar.tables.Tokens;
 import io.ceze.einar.tables.Users;
 
 
@@ -30,6 +31,11 @@ public class Tables {
      * The table <code>public.spaces</code>.
      */
     public static final Spaces SPACES = Spaces.SPACES;
+
+    /**
+     * The table <code>public.tokens</code>.
+     */
+    public static final Tokens TOKENS = Tokens.TOKENS;
 
     /**
      * The table <code>public.users</code>.

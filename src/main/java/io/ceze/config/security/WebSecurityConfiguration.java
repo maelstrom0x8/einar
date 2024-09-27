@@ -29,13 +29,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebSecurityConfiguration implements WebMvcConfigurer {
 
-    public AuthenticationService einarSecurityManager() {
-        return new AuthenticationService();
+    private final AuthenticationService authenticationService;
+
+    public WebSecurityConfiguration(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
     }
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(new AuthenticatedUserResolver(einarSecurityManager()));
+        resolvers.add(new AuthenticatedUserResolver(authenticationService));
     }
 
     @Bean

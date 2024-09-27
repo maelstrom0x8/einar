@@ -15,12 +15,41 @@
  */
 package io.ceze.config.security;
 
+import io.ceze.einar.user.domain.model.Token;
+import io.ceze.einar.user.domain.model.User;
+import io.ceze.einar.user.domain.repository.TokenRepository;
+import io.ceze.einar.user.domain.repository.UserRepository;
+import io.ceze.events.UserCreated;
+import java.time.Duration;
 import java.util.Map;
+import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionalEventListener;
 
+@Component
 public class AuthenticationService {
+
+    private static final Logger log = LoggerFactory.getLogger(AuthenticationService.class);
+    private final TokenRepository tokenRepository;
+
+    private final UserRepository userRepository;
+
+    public AuthenticationService(TokenRepository tokenRepository, UserRepository userRepository) {
+        this.tokenRepository = tokenRepository;
+        this.userRepository = userRepository;
+    }
+
+    @Async
+    @TransactionalEventListener
+    void onUserCreated(UserCreated event) {
+        log.info("Processing event {}", event);
+    }
 
     public AuthenticatedUser authenticated() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -29,5 +58,41 @@ public class AuthenticationService {
 
         Map<String, Object> claims = principal.getClaims();
         return new AuthenticatedUser(principal.getSubject(), claims);
+    }
+
+    public Token generateToken(User user) {
+        Token userToken =
+                Token.Builder.withDuration(Duration.ofHours(24))
+                        .value((String) authenticated().claims().get("access_token"))
+                        .user(user)
+                        .build();
+
+        return tokenRepository.save(userToken);
+    }
+
+    public void verifyToken(String token) {
+        String[] id_value = token.split("/");
+        if (id_value.length < 2) {
+            throw new IllegalArgumentException("Invalid token format");
+        }
+
+        try {
+            UUID tokenId = UUID.fromString(id_value[0]);
+            Token token1 =
+                    tokenRepository
+                            .findById(tokenId)
+                            .orElseThrow(() -> new IllegalArgumentException("Token not found"));
+
+            if (!token1.getValue().equals(id_value[1])) {
+                throw new RuntimeException("Problem with token contents");
+            } else {
+                token1.getUser().setVerified(true);
+                userRepository.update(token1.getUser());
+                tokenRepository.save(token1); // implement update
+            }
+
+        } catch (IllegalArgumentException | NullPointerException e) {
+            throw new IllegalArgumentException("Invalid token or format", e);
+        }
     }
 }

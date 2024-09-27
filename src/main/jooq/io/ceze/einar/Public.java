@@ -7,6 +7,7 @@ package io.ceze.einar;
 import io.ceze.einar.tables.Locations;
 import io.ceze.einar.tables.Profiles;
 import io.ceze.einar.tables.Spaces;
+import io.ceze.einar.tables.Tokens;
 import io.ceze.einar.tables.Users;
 
 import java.util.Arrays;
@@ -46,6 +47,11 @@ public class Public extends SchemaImpl {
     public final Spaces SPACES = Spaces.SPACES;
 
     /**
+     * The table <code>public.tokens</code>.
+     */
+    public final Tokens TOKENS = Tokens.TOKENS;
+
+    /**
      * The table <code>public.users</code>.
      */
     public final Users USERS = Users.USERS;
@@ -69,6 +75,7 @@ public class Public extends SchemaImpl {
             Locations.LOCATIONS,
             Profiles.PROFILES,
             Spaces.SPACES,
+            Tokens.TOKENS,
             Users.USERS
         );
     }

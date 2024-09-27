@@ -15,6 +15,7 @@
  */
 package io.ceze.einar.user.domain.service;
 
+import io.ceze.config.security.AuthenticationService;
 import io.ceze.einar.user.domain.dto.ProfileRequest;
 import io.ceze.einar.user.domain.dto.ProfileResponse;
 import io.ceze.einar.user.domain.model.Location;
@@ -41,16 +42,19 @@ public class UserService {
     private final LocationRepository locationRepository;
     private final ProfileRepository profileRepository;
 
+    private final AuthenticationService authenticationService;
     private final ApplicationEventPublisher eventPublisher;
 
     public UserService(
             UserRepository userRepository,
             LocationRepository locationRepository,
             ProfileRepository profileRepository,
+            AuthenticationService authenticationService,
             org.springframework.context.ApplicationEventPublisher eventPublisher) {
         this.userRepository = userRepository;
         this.locationRepository = locationRepository;
         this.profileRepository = profileRepository;
+        this.authenticationService = authenticationService;
         this.eventPublisher = eventPublisher;
     }
 
@@ -121,5 +125,9 @@ public class UserService {
         }
         var pf = profileRepository.update(profile);
         return ProfileResponse.from(pf);
+    }
+
+    public void verifyToken(String token) {
+        authenticationService.verifyToken(token);
     }
 }

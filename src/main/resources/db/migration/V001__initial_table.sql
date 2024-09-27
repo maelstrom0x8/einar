@@ -40,3 +40,28 @@ CREATE TABLE spaces (
     FOREIGN KEY (created_by) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (location_id) REFERENCES locations(location_id) ON DELETE SET NULL
 );
+
+CREATE OR REPLACE FUNCTION update_expiration()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.expires_at := NEW.created_at + NEW.duration;
+    NEW.expired := NEW.expires_at <= NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE TABLE tokens (
+    token_id BIGSERIAL PRIMARY KEY,
+    value TEXT NOT NULL,
+    user_id BIGINT REFERENCES users(user_id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    duration INTERVAL NOT NULL,
+    expires_at TIMESTAMP,
+    expired BOOLEAN
+);
+
+CREATE TRIGGER before_insert_update
+BEFORE INSERT OR UPDATE ON tokens
+FOR EACH ROW
+EXECUTE FUNCTION update_expiration();

@@ -1,12 +1,10 @@
 spring:
   application:
     name: einar-test
-  flyway:
-    enabled: true
-    url: jdbc:tc:postgresql:16://localhost/db?user=user&password=user
-    password: user
-    user: user
   datasource:
-    url: jdbc:tc:postgresql:16://localhost/db?user=user&password=user
+    url: jdbc:tc:postgresql:///db
     username: user
     password: user
+
+  modulith:
+    detection-strategy: explicitly-annotated
