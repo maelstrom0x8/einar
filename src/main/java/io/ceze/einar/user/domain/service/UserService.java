@@ -94,7 +94,7 @@ public class UserService {
         boolean b = user.isActive();
         log.info("{} account for {}", b ? "Activating" : "Deactivating", user.getEmail());
         user.setActive(!b);
-        userRepository.update(user);
+        userRepository.save(user);
         log.info("Account {} {} successfully", user.getEmail(), !b ? "deactivated" : "activated");
     }
 
@@ -120,10 +120,10 @@ public class UserService {
             location.setState(info.state());
             location.setCountry(info.country());
             location.setPostalCode(info.postalCode());
-            var loc = locationRepository.update(location);
+            var loc = locationRepository.save(location);
             profile.setLocation(loc);
         }
-        var pf = profileRepository.update(profile);
+        var pf = profileRepository.save(profile);
         return ProfileResponse.from(pf);
     }
 

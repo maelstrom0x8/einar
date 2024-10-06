@@ -16,9 +16,6 @@
 package io.ceze.einar.user.domain.repository;
 
 import io.ceze.einar.user.domain.model.Location;
-import io.ceze.einar.util.data.AbstractRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface LocationRepository extends AbstractRepository<Location, Long> {
-
-    Location update(Location location);
-}
+public interface LocationRepository extends JpaRepository<Location, Long> {}

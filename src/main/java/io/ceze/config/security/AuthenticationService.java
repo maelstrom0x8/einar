@@ -22,7 +22,6 @@ import io.ceze.einar.user.domain.repository.UserRepository;
 import io.ceze.events.UserCreated;
 import java.time.Duration;
 import java.util.Map;
-import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
@@ -61,13 +60,8 @@ public class AuthenticationService {
     }
 
     public Token generateToken(User user) {
-        Token userToken =
-                Token.Builder.withDuration(Duration.ofHours(24))
-                        .value((String) authenticated().claims().get("access_token"))
-                        .user(user)
-                        .build();
-
-        return tokenRepository.save(userToken);
+        Token token = new Token(user, "", Duration.ofHours(2), false);
+        return tokenRepository.save(token);
     }
 
     public void verifyToken(String token) {
@@ -77,18 +71,17 @@ public class AuthenticationService {
         }
 
         try {
-            UUID tokenId = UUID.fromString(id_value[0]);
             Token token1 =
                     tokenRepository
-                            .findById(tokenId)
+                            .findById(1)
                             .orElseThrow(() -> new IllegalArgumentException("Token not found"));
 
             if (!token1.getValue().equals(id_value[1])) {
                 throw new RuntimeException("Problem with token contents");
             } else {
                 token1.getUser().setVerified(true);
-                userRepository.update(token1.getUser());
-                tokenRepository.save(token1); // implement update
+                userRepository.save(token1.getUser());
+                tokenRepository.save(token1);
             }
 
         } catch (IllegalArgumentException | NullPointerException e) {

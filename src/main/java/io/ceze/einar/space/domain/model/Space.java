@@ -17,24 +17,40 @@ package io.ceze.einar.space.domain.model;
 
 import io.ceze.einar.user.domain.model.Location;
 import io.ceze.einar.user.domain.model.User;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Currency;
 import java.util.Locale;
 
-public class Space implements Serializable {
+@Entity
+@Table(name = "spaces")
+public class Space {
 
+    @Id
+    @Column(name = "space_id", columnDefinition = "bigserial")
+    @SequenceGenerator(
+            name = "space_sequence",
+            sequenceName = "spaces_id_seq",
+            initialValue = 1000,
+            allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "space_sequence")
     private Long id;
 
-    @NotNull private String description;
+    private String description;
 
-    @NotNull private Location location;
+    @ManyToOne
+    @JoinColumn(name = "location_id")
+    private Location location;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User createdBy;
 
+    @Column(precision = 10, scale = 3)
     private BigDecimal price;
+
     private Currency currency;
 
     private SpaceType type;

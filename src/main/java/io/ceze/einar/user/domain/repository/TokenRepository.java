@@ -16,7 +16,6 @@
 package io.ceze.einar.user.domain.repository;
 
 import io.ceze.einar.user.domain.model.Token;
-import io.ceze.einar.util.data.AbstractRepository;
-import java.util.UUID;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface TokenRepository extends AbstractRepository<Token, UUID> {}
+public interface TokenRepository extends JpaRepository<Token, Integer> {}

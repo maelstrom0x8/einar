@@ -15,19 +15,44 @@
  */
 package io.ceze.einar.user.domain.model;
 
-import java.io.Serializable;
+import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import org.hibernate.annotations.CurrentTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
-public class Profile implements Serializable {
+@Entity
+@Table(name = "profiles")
+public class Profile {
 
+    @Id
+    @Column(name = "profile_id", columnDefinition = "bigserial")
+    @SequenceGenerator(
+            name = "profile_seq",
+            sequenceName = "profiles_id_seq",
+            allocationSize = 1,
+            initialValue = 1000)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "profile_sequence")
     private Long id;
+
+    @ManyToOne(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "user_id")
     private User user;
+
+    @Column(length = 32)
     private String firstName;
+
+    @Column(length = 32)
     private String lastName;
-    private LocalDateTime createdAt;
-    private LocalDateTime lastModified;
+
+    @CurrentTimestamp private LocalDateTime createdAt;
+
+    @UpdateTimestamp private LocalDateTime lastModified;
+
     private LocalDate dateOfBirth;
+
+    @ManyToOne(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "location_id")
     private Location location;
 
     public Profile() {}

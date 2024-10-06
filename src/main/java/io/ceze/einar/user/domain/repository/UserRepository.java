@@ -16,14 +16,12 @@
 package io.ceze.einar.user.domain.repository;
 
 import io.ceze.einar.user.domain.model.User;
-import io.ceze.einar.util.data.AbstractRepository;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository extends AbstractRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmail(String email);
 
     boolean existsByEmail(String email);
-
-    User update(User user);
 }

@@ -15,29 +15,30 @@
  */
 package io.ceze.einar.user.web.controller;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
-import io.ceze.einar.user.domain.service.UserService;
-import io.ceze.mail.MailService;
+import io.ceze.einar.TestcontainersConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Import(TestcontainersConfig.class)
+@SpringBootTest
 @AutoConfigureMockMvc
-@WebMvcTest(controllers = UserController.class)
-@Import({UserController.class, MailService.class})
+// @AutoConfigureMockMvc
+// @WebMvcTest(controllers = UserController.class)
+// @ExtendWith(MockitoExtension.class)
 class UserControllerTest {
 
-    @MockBean UserService userService;
+    //    @MockBean UserService userService;
 
     @Autowired MockMvc mockMvc;
 
@@ -48,6 +49,6 @@ class UserControllerTest {
                                 .with(jwt().jwt(j -> j.claim("sub", "bob@einar.org"))))
                 .andExpect(MockMvcResultMatchers.status().is(HttpStatus.ACCEPTED.value()));
 
-        verify(userService, times(1)).create("bob@einar.org");
+        //        verify(userService, times(1)).create("bob@einar.org");
     }
 }

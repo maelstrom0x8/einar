@@ -1,3 +1,8 @@
+CREATE SEQUENCE profiles_id_seq START WITH 1000 INCREMENT BY 1;
+CREATE SEQUENCE users_id_seq START WITH 1000 INCREMENT BY 1;
+CREATE SEQUENCE locations_id_seq START WITH 1000 INCREMENT BY 1;
+CREATE SEQUENCE spaces_id_seq START WITH 1000 INCREMENT BY 1;
+
 CREATE TABLE users (
     user_id BIGSERIAL PRIMARY KEY,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -9,11 +14,11 @@ CREATE TABLE users (
 
 CREATE TABLE locations (
     location_id BIGSERIAL PRIMARY KEY,
-    street_no INTEGER,
+    street_no VARCHAR(100),
     street_name VARCHAR(255),
-    city VARCHAR(100),
-    state VARCHAR(100),
-    postal_code VARCHAR(20),
+    city VARCHAR(20),
+    state VARCHAR(20),
+    postal_code VARCHAR(8),
     country CHAR(2),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

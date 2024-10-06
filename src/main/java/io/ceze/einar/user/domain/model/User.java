@@ -15,21 +15,34 @@
  */
 package io.ceze.einar.user.domain.model;
 
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
-import java.io.Serializable;
 import java.time.LocalDateTime;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
-public class User implements Serializable {
+@Entity
+@Table(name = "users")
+public class User {
 
+    @Id
+    @Column(name = "user_id", columnDefinition = "bigserial")
+    @SequenceGenerator(
+            name = "user_sequence",
+            sequenceName = "user_id_seq",
+            allocationSize = 1,
+            initialValue = 1000)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
     private Long id;
 
     @NotEmpty
     @Email(message = "Email is not valid")
     private String email;
 
-    private LocalDateTime createdAt;
-    private LocalDateTime lastModified;
+    @CreationTimestamp private LocalDateTime createdAt;
+
+    @UpdateTimestamp private LocalDateTime lastModified;
     private boolean verified;
     private boolean active;
 

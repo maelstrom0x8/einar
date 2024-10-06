@@ -155,8 +155,8 @@ class UserServiceTest {
         when(userRepository.save(any(User.class))).thenReturn(user);
         when(profileRepository.save(any(Profile.class))).thenReturn(profile);
         when(profileRepository.findByUserId(any())).thenReturn(Optional.of(profile));
-        when(profileRepository.update(any(Profile.class))).thenReturn(profile);
-        when(locationRepository.update(any(Location.class))).thenReturn(profile.getLocation());
+
+        when(locationRepository.save(any(Location.class))).thenReturn(profile.getLocation());
 
         userService.create(user.getEmail());
 

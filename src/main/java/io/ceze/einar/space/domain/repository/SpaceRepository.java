@@ -16,6 +16,6 @@
 package io.ceze.einar.space.domain.repository;
 
 import io.ceze.einar.space.domain.model.Space;
-import io.ceze.einar.util.data.AbstractRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface SpaceRepository extends AbstractRepository<Space, Long> {}
+public interface SpaceRepository extends JpaRepository<Space, Long> {}

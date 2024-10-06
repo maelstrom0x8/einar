@@ -15,13 +15,38 @@
  */
 package io.ceze.einar.user.domain.model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "locations")
 public class Location {
 
+    @Id
+    @Column(name = "locations_id", columnDefinition = "bigserial")
+    @SequenceGenerator(
+            name = "location_seq",
+            allocationSize = 1,
+            initialValue = 1000,
+            sequenceName = "locations_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "location_seq")
+    private Long id;
+
+    @Column(length = 5)
     private Integer streetNumber;
+
+    @Column(length = 100)
     private String street;
+
+    @Column(length = 20)
     private String city;
+
+    @Column(length = 20)
     private String state;
+
+    @Column(length = 8)
     private String postalCode;
+
+    @Column(length = 2)
     private String country;
 
     public Location() {}

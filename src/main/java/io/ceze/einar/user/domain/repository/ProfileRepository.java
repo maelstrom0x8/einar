@@ -16,12 +16,10 @@
 package io.ceze.einar.user.domain.repository;
 
 import io.ceze.einar.user.domain.model.Profile;
-import io.ceze.einar.util.data.AbstractRepository;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ProfileRepository extends AbstractRepository<Profile, Long> {
+public interface ProfileRepository extends JpaRepository<Profile, Long> {
 
     Optional<Profile> findByUserId(Long userId);
-
-    Profile update(Profile profile);
 }

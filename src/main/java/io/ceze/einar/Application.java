@@ -17,8 +17,10 @@ package io.ceze.einar;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication(scanBasePackages = "io.ceze")
+@ComponentScan(basePackages = "io.ceze")
 public class Application {
 
     public static void main(String[] args) {

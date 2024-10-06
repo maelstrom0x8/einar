@@ -15,22 +15,41 @@
  */
 package io.ceze.einar.user.domain.model;
 
-import java.io.Serializable;
+import jakarta.persistence.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.UUID;
-import org.springframework.util.Assert;
+import org.hibernate.annotations.CreationTimestamp;
 
-public class Token implements Serializable {
+@Entity
+@Table(name = "tokens")
+public class Token {
 
+    @Id private Long id;
+
+    @JoinColumn(name = "user_id")
+    @MapsId
+    @OneToOne(cascade = CascadeType.REMOVE)
     private User user;
-    private UUID tokenId;
+
     private String value;
-    private LocalDateTime createdAt;
+
+    @CreationTimestamp private LocalDateTime createdAt;
     private boolean expired;
+
     private Duration duration;
 
-    private Token() {}
+    public Token() {}
+
+    public Token(User user, String value, Duration duration, boolean expired) {
+        this.user = user;
+        this.value = value;
+        this.duration = duration;
+        this.expired = expired;
+    }
+
+    public Long getId() {
+        return id;
+    }
 
     public User getUser() {
         return user;
@@ -38,14 +57,6 @@ public class Token implements Serializable {
 
     public void setUser(User user) {
         this.user = user;
-    }
-
-    public UUID getTokenId() {
-        return tokenId;
-    }
-
-    public void setTokenId(UUID tokenId) {
-        this.tokenId = tokenId;
     }
 
     public String getValue() {
@@ -78,39 +89,5 @@ public class Token implements Serializable {
 
     public void setDuration(Duration duration) {
         this.duration = duration;
-    }
-
-    public static class Builder {
-
-        private final Token token;
-
-        private Builder() {
-            this.token = new Token();
-        }
-
-        public static Builder withDuration(Duration duration) {
-            Builder b = new Builder();
-            b.token.setDuration(duration);
-            b.token.setTokenId(UUID.randomUUID());
-            return b;
-        }
-
-        public Builder value(String value) {
-            this.token.setValue(token.getTokenId().toString() + "/" + value);
-            return this;
-        }
-
-        public Builder user(User user) {
-            this.token.setUser(user);
-            return this;
-        }
-
-        public Token build() {
-            Assert.notNull(this.token.duration, () -> "Token duration cannot be null");
-            Assert.notNull(this.token.user.getId(), () -> "User id must be present");
-            this.token.setCreatedAt(LocalDateTime.now());
-            this.token.setExpired(false);
-            return this.token;
-        }
     }
 }
