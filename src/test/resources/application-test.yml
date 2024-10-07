@@ -1,10 +1,31 @@
 spring:
   application:
     name: einar-test
+  flyway:
+    url: jdbc:tc:postgresql:16://localhost/db?user=user&password=user
+    password: user
+    user: user
   datasource:
-    url: jdbc:tc:postgresql:///db
+    url: jdbc:tc:postgresql:16://localhost/db?user=user&password=user
     username: user
     password: user
+  jpa:
+    defer-datasource-initialization: false
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+
+  #logging:
+  #  level:
+  #    com:
+  #      zaxxer: WARN
+  #    org:
+  #      hibernate: WARN
+  #      testcontainers: OFF
+  #      springframework: WARN
+  #      apache: WARN
+  #    tc: OFF
 
   modulith:
     detection-strategy: explicitly-annotated

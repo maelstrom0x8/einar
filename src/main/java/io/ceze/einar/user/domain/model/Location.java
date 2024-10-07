@@ -22,7 +22,7 @@ import jakarta.persistence.*;
 public class Location {
 
     @Id
-    @Column(name = "locations_id", columnDefinition = "bigserial")
+    @Column(name = "location_id", columnDefinition = "bigserial")
     @SequenceGenerator(
             name = "location_seq",
             allocationSize = 1,

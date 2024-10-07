@@ -19,7 +19,7 @@ CREATE TABLE locations (
     city VARCHAR(20),
     state VARCHAR(20),
     postal_code VARCHAR(8),
-    country CHAR(2),
+    country VARCHAR(2),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
