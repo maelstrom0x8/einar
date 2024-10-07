@@ -18,16 +18,12 @@ package io.ceze.config.security;
 import io.ceze.config.web.resolvers.AuthenticatedUserResolver;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.JwtDecoders;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -35,33 +31,30 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebSecurityConfiguration implements WebMvcConfigurer {
 
-    @Autowired Environment environment;
+  @Autowired
+  Environment environment;
 
-    private final AuthenticationService authenticationService;
+  private final AuthenticationService authenticationService;
 
-    public WebSecurityConfiguration(AuthenticationService authenticationService) {
-        this.authenticationService = authenticationService;
-    }
+  public WebSecurityConfiguration(AuthenticationService authenticationService) {
+    this.authenticationService = authenticationService;
+  }
 
-    @Override
-    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(new AuthenticatedUserResolver(authenticationService));
-    }
+  @Override
+  public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+    resolvers.add(new AuthenticatedUserResolver(authenticationService));
+  }
 
-    @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+  @Bean
+  SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        http.csrf(CsrfConfigurer::disable);
-        http.sessionManagement(
-                session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        http.oauth2ResourceServer(
-                server ->
-                        server.jwt(
-                                jwt ->
-                                        jwt.jwtAuthenticationConverter(
-                                                new DefaultJwtAuthenticationTokenConverter())));
-        http.authorizeHttpRequests(requests -> requests.anyRequest().permitAll());
+    http.csrf(CsrfConfigurer::disable);
+    http.sessionManagement(
+        session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+    http.oauth2ResourceServer(server -> server.jwt(
+        jwt -> jwt.jwtAuthenticationConverter(new DefaultJwtAuthenticationTokenConverter())));
+    http.authorizeHttpRequests(requests -> requests.anyRequest().permitAll());
 
-        return http.build();
-    }
+    return http.build();
+  }
 }

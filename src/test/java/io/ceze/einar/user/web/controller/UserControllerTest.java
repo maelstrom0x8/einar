@@ -38,17 +38,17 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 // @ExtendWith(MockitoExtension.class)
 class UserControllerTest {
 
-    //    @MockBean UserService userService;
+  //    @MockBean UserService userService;
 
-    @Autowired MockMvc mockMvc;
+  @Autowired
+  MockMvc mockMvc;
 
-    @Test
-    void accountIsCreatedForAuthenticatedUser() throws Exception {
-        mockMvc.perform(
-                        post("/v1/users/register")
-                                .with(jwt().jwt(j -> j.claim("sub", "bob@einar.org"))))
-                .andExpect(MockMvcResultMatchers.status().is(HttpStatus.ACCEPTED.value()));
+  @Test
+  void accountIsCreatedForAuthenticatedUser() throws Exception {
+    mockMvc
+        .perform(post("/v1/users/register").with(jwt().jwt(j -> j.claim("sub", "bob@einar.org"))))
+        .andExpect(MockMvcResultMatchers.status().is(HttpStatus.ACCEPTED.value()));
 
-        //        verify(userService, times(1)).create("bob@einar.org");
-    }
+    //        verify(userService, times(1)).create("bob@einar.org");
+  }
 }

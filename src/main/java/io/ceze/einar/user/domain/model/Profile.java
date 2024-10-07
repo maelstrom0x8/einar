@@ -25,118 +25,120 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Table(name = "profiles")
 public class Profile {
 
-    @Id
-    @Column(name = "profile_id", columnDefinition = "bigserial")
-    @SequenceGenerator(
-            name = "profile_seq",
-            sequenceName = "profiles_id_seq",
-            allocationSize = 1,
-            initialValue = 1000)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "profile_sequence")
-    private Long id;
+  @Id
+  @Column(name = "profile_id", columnDefinition = "bigserial")
+  @SequenceGenerator(
+      name = "profile_seq",
+      sequenceName = "profiles_id_seq",
+      allocationSize = 1,
+      initialValue = 1000)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "profile_sequence")
+  private Long id;
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "user_id")
-    private User user;
+  @ManyToOne(cascade = CascadeType.REMOVE)
+  @JoinColumn(name = "user_id")
+  private User user;
 
-    @Column(length = 32)
-    private String firstName;
+  @Column(length = 32)
+  private String firstName;
 
-    @Column(length = 32)
-    private String lastName;
+  @Column(length = 32)
+  private String lastName;
 
-    @CurrentTimestamp private LocalDateTime createdAt;
+  @CurrentTimestamp
+  private LocalDateTime createdAt;
 
-    @UpdateTimestamp private LocalDateTime lastModified;
+  @UpdateTimestamp
+  private LocalDateTime lastModified;
 
-    private LocalDate dateOfBirth;
+  private LocalDate dateOfBirth;
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "location_id")
-    private Location location;
+  @ManyToOne(cascade = CascadeType.REMOVE)
+  @JoinColumn(name = "location_id")
+  private Location location;
 
-    public Profile() {}
+  public Profile() {}
 
-    public Profile(
-            User user,
-            String firstName,
-            String lastName,
-            LocalDateTime createdAt,
-            LocalDateTime lastModified,
-            LocalDate dateOfBirth,
-            Location location) {
-        this.user = user;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.createdAt = createdAt;
-        this.lastModified = lastModified;
-        this.dateOfBirth = dateOfBirth;
-        this.location = location;
-    }
+  public Profile(
+      User user,
+      String firstName,
+      String lastName,
+      LocalDateTime createdAt,
+      LocalDateTime lastModified,
+      LocalDate dateOfBirth,
+      Location location) {
+    this.user = user;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.createdAt = createdAt;
+    this.lastModified = lastModified;
+    this.dateOfBirth = dateOfBirth;
+    this.location = location;
+  }
 
-    public Long getId() {
-        return id;
-    }
+  public Long getId() {
+    return id;
+  }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-    public User getUser() {
-        return user;
-    }
+  public User getUser() {
+    return user;
+  }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
+  public void setUser(User user) {
+    this.user = user;
+  }
 
-    public String getFirstName() {
-        return firstName;
-    }
+  public String getFirstName() {
+    return firstName;
+  }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+  public void setFirstName(String firstName) {
+    this.firstName = firstName;
+  }
 
-    public String getLastName() {
-        return lastName;
-    }
+  public String getLastName() {
+    return lastName;
+  }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+  public void setLastName(String lastName) {
+    this.lastName = lastName;
+  }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
+  public LocalDateTime getCreatedAt() {
+    return createdAt;
+  }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
+  public void setCreatedAt(LocalDateTime createdAt) {
+    this.createdAt = createdAt;
+  }
 
-    public LocalDateTime getLastModified() {
-        return lastModified;
-    }
+  public LocalDateTime getLastModified() {
+    return lastModified;
+  }
 
-    public void setLastModified(LocalDateTime lastModified) {
-        this.lastModified = lastModified;
-    }
+  public void setLastModified(LocalDateTime lastModified) {
+    this.lastModified = lastModified;
+  }
 
-    public LocalDate getDateOfBirth() {
-        return dateOfBirth;
-    }
+  public LocalDate getDateOfBirth() {
+    return dateOfBirth;
+  }
 
-    public void setDateOfBirth(LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
+  public void setDateOfBirth(LocalDate dateOfBirth) {
+    this.dateOfBirth = dateOfBirth;
+  }
 
-    public Location getLocation() {
-        return location;
-    }
+  public Location getLocation() {
+    return location;
+  }
 
-    public void setLocation(Location location) {
-        this.location = location;
-    }
+  public void setLocation(Location location) {
+    this.location = location;
+  }
 
-    //    @TODO: Check for profile completeness
+  //    @TODO: Check for profile completeness
 }

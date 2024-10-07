@@ -28,101 +28,96 @@ import java.util.Locale;
 @Table(name = "spaces")
 public class Space {
 
-    @Id
-    @Column(name = "space_id", columnDefinition = "bigserial")
-    @SequenceGenerator(
-            name = "space_sequence",
-            sequenceName = "spaces_id_seq",
-            initialValue = 1000,
-            allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "space_sequence")
-    private Long id;
+  @Id
+  @Column(name = "space_id", columnDefinition = "bigserial")
+  @SequenceGenerator(
+      name = "space_sequence",
+      sequenceName = "spaces_id_seq",
+      initialValue = 1000,
+      allocationSize = 1)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "space_sequence")
+  private Long id;
 
-    private String description;
+  private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "location_id")
-    private Location location;
+  @ManyToOne
+  @JoinColumn(name = "location_id")
+  private Location location;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User createdBy;
+  @ManyToOne
+  @JoinColumn(name = "user_id")
+  private User createdBy;
 
-    @Column(precision = 10, scale = 3)
-    private BigDecimal price;
+  @Column(precision = 10, scale = 3)
+  private BigDecimal price;
 
-    private Currency currency;
+  private Currency currency;
 
-    private SpaceType type;
+  private SpaceType type;
 
-    public Space() {}
+  public Space() {}
 
-    public Space(
-            String description,
-            Location location,
-            User createdBy,
-            BigDecimal price,
-            SpaceType type) {
-        this.description = description;
-        this.location = location;
-        this.createdBy = createdBy;
-        this.price = price;
-        this.type = type;
+  public Space(
+      String description, Location location, User createdBy, BigDecimal price, SpaceType type) {
+    this.description = description;
+    this.location = location;
+    this.createdBy = createdBy;
+    this.price = price;
+    this.type = type;
 
-        //      @TODO: fix this
-        Locale locale =
-                Arrays.stream(Locale.getAvailableLocales())
-                        .filter(loc -> loc.getCountry().equals(location.getCountry()))
-                        .findFirst()
-                        .orElseThrow();
-        this.currency = Currency.getInstance(locale);
-    }
+    //      @TODO: fix this
+    Locale locale = Arrays.stream(Locale.getAvailableLocales())
+        .filter(loc -> loc.getCountry().equals(location.getCountry()))
+        .findFirst()
+        .orElseThrow();
+    this.currency = Currency.getInstance(locale);
+  }
 
-    public Long getId() {
-        return id;
-    }
+  public Long getId() {
+    return id;
+  }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-    public @NotNull String getDescription() {
-        return description;
-    }
+  public @NotNull String getDescription() {
+    return description;
+  }
 
-    public void setDescription(@NotNull String description) {
-        this.description = description;
-    }
+  public void setDescription(@NotNull String description) {
+    this.description = description;
+  }
 
-    public @NotNull Location getLocation() {
-        return location;
-    }
+  public @NotNull Location getLocation() {
+    return location;
+  }
 
-    public void setLocation(@NotNull Location location) {
-        this.location = location;
-    }
+  public void setLocation(@NotNull Location location) {
+    this.location = location;
+  }
 
-    public User getCreatedBy() {
-        return createdBy;
-    }
+  public User getCreatedBy() {
+    return createdBy;
+  }
 
-    public void setCreatedBy(User createdBy) {
-        this.createdBy = createdBy;
-    }
+  public void setCreatedBy(User createdBy) {
+    this.createdBy = createdBy;
+  }
 
-    public BigDecimal getPrice() {
-        return price;
-    }
+  public BigDecimal getPrice() {
+    return price;
+  }
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
+  public void setPrice(BigDecimal price) {
+    this.price = price;
+  }
 
-    public Currency getCurrency() {
-        return currency;
-    }
+  public Currency getCurrency() {
+    return currency;
+  }
 
-    public void setCurrency(Currency currency) {
-        this.currency = currency;
-    }
+  public void setCurrency(Currency currency) {
+    this.currency = currency;
+  }
 }

@@ -37,97 +37,97 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class UserService {
 
-    private static final Logger log = LoggerFactory.getLogger(UserService.class);
-    private final UserRepository userRepository;
-    private final LocationRepository locationRepository;
-    private final ProfileRepository profileRepository;
+  private static final Logger log = LoggerFactory.getLogger(UserService.class);
+  private final UserRepository userRepository;
+  private final LocationRepository locationRepository;
+  private final ProfileRepository profileRepository;
 
-    private final AuthenticationService authenticationService;
-    private final ApplicationEventPublisher eventPublisher;
+  private final AuthenticationService authenticationService;
+  private final ApplicationEventPublisher eventPublisher;
 
-    public UserService(
-            UserRepository userRepository,
-            LocationRepository locationRepository,
-            ProfileRepository profileRepository,
-            AuthenticationService authenticationService,
-            org.springframework.context.ApplicationEventPublisher eventPublisher) {
-        this.userRepository = userRepository;
-        this.locationRepository = locationRepository;
-        this.profileRepository = profileRepository;
-        this.authenticationService = authenticationService;
-        this.eventPublisher = eventPublisher;
+  public UserService(
+      UserRepository userRepository,
+      LocationRepository locationRepository,
+      ProfileRepository profileRepository,
+      AuthenticationService authenticationService,
+      org.springframework.context.ApplicationEventPublisher eventPublisher) {
+    this.userRepository = userRepository;
+    this.locationRepository = locationRepository;
+    this.profileRepository = profileRepository;
+    this.authenticationService = authenticationService;
+    this.eventPublisher = eventPublisher;
+  }
+
+  public void create(String email) throws ResourceAlreadyExistException {
+    if (userRepository.existsByEmail(email)) {
+      log.error("Duplicates not allowed. User already exists.");
+      throw new ResourceAlreadyExistException(User.class, email);
     }
 
-    public void create(String email) throws ResourceAlreadyExistException {
-        if (userRepository.existsByEmail(email)) {
-            log.error("Duplicates not allowed. User already exists.");
-            throw new ResourceAlreadyExistException(User.class, email);
-        }
+    try {
+      User user = userRepository.save(new User(email));
+      Location location = locationRepository.save(new Location());
 
-        try {
-            User user = userRepository.save(new User(email));
-            Location location = locationRepository.save(new Location());
+      Profile profile = new Profile();
+      profile.setUser(user);
+      profile.setLocation(location);
+      profileRepository.save(profile);
 
-            Profile profile = new Profile();
-            profile.setUser(user);
-            profile.setLocation(location);
-            profileRepository.save(profile);
+      log.info("User account for {} created successfully", user.getEmail());
+      eventPublisher.publishEvent(new UserCreated(email));
 
-            log.info("User account for {} created successfully", user.getEmail());
-            eventPublisher.publishEvent(new UserCreated(email));
-
-        } catch (ResourceAlreadyExistException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("Unable to save user account. {}", e.getMessage());
-        }
+    } catch (ResourceAlreadyExistException e) {
+      throw e;
+    } catch (Exception e) {
+      log.error("Unable to save user account. {}", e.getMessage());
     }
+  }
 
-    public User getUserById(Long userId) {
-        return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-    }
+  public User getUserById(Long userId) {
+    return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+  }
 
-    public void toggleUserActiveStatus(User usr, Long id) throws IllegalAccessException {
-        User user = getUserById(id);
-        if (!usr.getId().equals(user.getId()))
-            throw new IllegalAccessException("Cannot update another account");
-        boolean b = user.isActive();
-        log.info("{} account for {}", b ? "Activating" : "Deactivating", user.getEmail());
-        user.setActive(!b);
-        userRepository.save(user);
-        log.info("Account {} {} successfully", user.getEmail(), !b ? "deactivated" : "activated");
-    }
+  public void toggleUserActiveStatus(User usr, Long id) throws IllegalAccessException {
+    User user = getUserById(id);
+    if (!usr.getId().equals(user.getId()))
+      throw new IllegalAccessException("Cannot update another account");
+    boolean b = user.isActive();
+    log.info("{} account for {}", b ? "Activating" : "Deactivating", user.getEmail());
+    user.setActive(!b);
+    userRepository.save(user);
+    log.info("Account {} {} successfully", user.getEmail(), !b ? "deactivated" : "activated");
+  }
 
-    /// Deletes the user account and all attached resources.
-    /// @param user The current authenticated user
-    public void deleteAccount(User user) {
-        userRepository.delete(user);
-    }
+  /// Deletes the user account and all attached resources.
+  /// @param user The current authenticated user
+  public void deleteAccount(User user) {
+    userRepository.delete(user);
+  }
 
-    public ProfileResponse updateProfile(User user, ProfileRequest request) {
-        Profile profile = profileRepository.findByUserId(user.getId()).orElseThrow();
-        log.info("Updating user profile pf_{}_{}", user.getId(), profile.getId());
-        profile.setFirstName(request.firstName());
-        profile.setLastName(request.lastName());
-        profile.setDateOfBirth(request.dateOfBirth());
-        if (request.locationInfo() != null) {
-            ProfileRequest.LocationInfo info = request.locationInfo();
-            log.info("Updating location details <{}>", user.getEmail());
-            Location location = profile.getLocation();
-            location.setStreetNumber(info.streetNumber());
-            location.setStreet(info.streetName());
-            location.setCity(info.city());
-            location.setState(info.state());
-            location.setCountry(info.country());
-            location.setPostalCode(info.postalCode());
-            var loc = locationRepository.save(location);
-            profile.setLocation(loc);
-        }
-        var pf = profileRepository.save(profile);
-        return ProfileResponse.from(pf);
+  public ProfileResponse updateProfile(User user, ProfileRequest request) {
+    Profile profile = profileRepository.findByUserId(user.getId()).orElseThrow();
+    log.info("Updating user profile pf_{}_{}", user.getId(), profile.getId());
+    profile.setFirstName(request.firstName());
+    profile.setLastName(request.lastName());
+    profile.setDateOfBirth(request.dateOfBirth());
+    if (request.locationInfo() != null) {
+      ProfileRequest.LocationInfo info = request.locationInfo();
+      log.info("Updating location details <{}>", user.getEmail());
+      Location location = profile.getLocation();
+      location.setStreetNumber(info.streetNumber());
+      location.setStreet(info.streetName());
+      location.setCity(info.city());
+      location.setState(info.state());
+      location.setCountry(info.country());
+      location.setPostalCode(info.postalCode());
+      var loc = locationRepository.save(location);
+      profile.setLocation(loc);
     }
+    var pf = profileRepository.save(profile);
+    return ProfileResponse.from(pf);
+  }
 
-    public void verifyToken(String token) {
-        authenticationService.verifyToken(token);
-    }
+  public void verifyToken(String token) {
+    authenticationService.verifyToken(token);
+  }
 }

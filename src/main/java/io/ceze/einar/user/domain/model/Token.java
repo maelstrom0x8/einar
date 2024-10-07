@@ -24,70 +24,73 @@ import org.hibernate.annotations.CreationTimestamp;
 @Table(name = "tokens")
 public class Token {
 
-    @Id private Long id;
+  @Id
+  private Long id;
 
-    @JoinColumn(name = "user_id")
-    @MapsId
-    @OneToOne(cascade = CascadeType.REMOVE)
-    private User user;
+  @JoinColumn(name = "user_id")
+  @MapsId
+  @OneToOne(cascade = CascadeType.REMOVE)
+  private User user;
 
-    private String value;
+  private String value;
 
-    @CreationTimestamp private LocalDateTime createdAt;
-    private boolean expired;
+  @CreationTimestamp
+  private LocalDateTime createdAt;
 
-    private Duration duration;
+  private boolean expired;
 
-    public Token() {}
+  private Duration duration;
 
-    public Token(User user, String value, Duration duration, boolean expired) {
-        this.user = user;
-        this.value = value;
-        this.duration = duration;
-        this.expired = expired;
-    }
+  public Token() {}
 
-    public Long getId() {
-        return id;
-    }
+  public Token(User user, String value, Duration duration, boolean expired) {
+    this.user = user;
+    this.value = value;
+    this.duration = duration;
+    this.expired = expired;
+  }
 
-    public User getUser() {
-        return user;
-    }
+  public Long getId() {
+    return id;
+  }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
+  public User getUser() {
+    return user;
+  }
 
-    public String getValue() {
-        return value;
-    }
+  public void setUser(User user) {
+    this.user = user;
+  }
 
-    public void setValue(String value) {
-        this.value = value;
-    }
+  public String getValue() {
+    return value;
+  }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
+  public void setValue(String value) {
+    this.value = value;
+  }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
+  public LocalDateTime getCreatedAt() {
+    return createdAt;
+  }
 
-    public boolean isExpired() {
-        return expired;
-    }
+  public void setCreatedAt(LocalDateTime createdAt) {
+    this.createdAt = createdAt;
+  }
 
-    public void setExpired(boolean expired) {
-        this.expired = expired;
-    }
+  public boolean isExpired() {
+    return expired;
+  }
 
-    public Duration getDuration() {
-        return duration;
-    }
+  public void setExpired(boolean expired) {
+    this.expired = expired;
+  }
 
-    public void setDuration(Duration duration) {
-        this.duration = duration;
-    }
+  public Duration getDuration() {
+    return duration;
+  }
+
+  public void setDuration(Duration duration) {
+    this.duration = duration;
+  }
 }

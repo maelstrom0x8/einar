@@ -34,58 +34,57 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @Component
 public class AuthenticationService {
 
-    private static final Logger log = LoggerFactory.getLogger(AuthenticationService.class);
-    private final TokenRepository tokenRepository;
+  private static final Logger log = LoggerFactory.getLogger(AuthenticationService.class);
+  private final TokenRepository tokenRepository;
 
-    private final UserRepository userRepository;
+  private final UserRepository userRepository;
 
-    public AuthenticationService(TokenRepository tokenRepository, UserRepository userRepository) {
-        this.tokenRepository = tokenRepository;
-        this.userRepository = userRepository;
+  public AuthenticationService(TokenRepository tokenRepository, UserRepository userRepository) {
+    this.tokenRepository = tokenRepository;
+    this.userRepository = userRepository;
+  }
+
+  @Async
+  @TransactionalEventListener
+  void onUserCreated(UserCreated event) {
+    log.info("Processing event {}", event);
+  }
+
+  public AuthenticatedUser authenticated() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+    Jwt principal = (Jwt) authentication.getPrincipal();
+
+    Map<String, Object> claims = principal.getClaims();
+    return new AuthenticatedUser(principal.getSubject(), claims);
+  }
+
+  public Token generateToken(User user) {
+    Token token = new Token(user, "", Duration.ofHours(2), false);
+    return tokenRepository.save(token);
+  }
+
+  public void verifyToken(String token) {
+    String[] id_value = token.split("/");
+    if (id_value.length < 2) {
+      throw new IllegalArgumentException("Invalid token format");
     }
 
-    @Async
-    @TransactionalEventListener
-    void onUserCreated(UserCreated event) {
-        log.info("Processing event {}", event);
+    try {
+      Token token1 = tokenRepository
+          .findById(1)
+          .orElseThrow(() -> new IllegalArgumentException("Token not found"));
+
+      if (!token1.getValue().equals(id_value[1])) {
+        throw new RuntimeException("Problem with token contents");
+      } else {
+        token1.getUser().setVerified(true);
+        userRepository.save(token1.getUser());
+        tokenRepository.save(token1);
+      }
+
+    } catch (IllegalArgumentException | NullPointerException e) {
+      throw new IllegalArgumentException("Invalid token or format", e);
     }
-
-    public AuthenticatedUser authenticated() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        Jwt principal = (Jwt) authentication.getPrincipal();
-
-        Map<String, Object> claims = principal.getClaims();
-        return new AuthenticatedUser(principal.getSubject(), claims);
-    }
-
-    public Token generateToken(User user) {
-        Token token = new Token(user, "", Duration.ofHours(2), false);
-        return tokenRepository.save(token);
-    }
-
-    public void verifyToken(String token) {
-        String[] id_value = token.split("/");
-        if (id_value.length < 2) {
-            throw new IllegalArgumentException("Invalid token format");
-        }
-
-        try {
-            Token token1 =
-                    tokenRepository
-                            .findById(1)
-                            .orElseThrow(() -> new IllegalArgumentException("Token not found"));
-
-            if (!token1.getValue().equals(id_value[1])) {
-                throw new RuntimeException("Problem with token contents");
-            } else {
-                token1.getUser().setVerified(true);
-                userRepository.save(token1.getUser());
-                tokenRepository.save(token1);
-            }
-
-        } catch (IllegalArgumentException | NullPointerException e) {
-            throw new IllegalArgumentException("Invalid token or format", e);
-        }
-    }
+  }
 }

@@ -45,125 +45,128 @@ import org.springframework.context.ApplicationEventPublisher;
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
-    @InjectMocks private UserService userService;
+  @InjectMocks
+  private UserService userService;
 
-    @Mock private UserRepository userRepository;
+  @Mock
+  private UserRepository userRepository;
 
-    @Mock private ProfileRepository profileRepository;
+  @Mock
+  private ProfileRepository profileRepository;
 
-    @Mock private LocationRepository locationRepository;
+  @Mock
+  private LocationRepository locationRepository;
 
-    @Mock private ApplicationEventPublisher eventPublisher;
+  @Mock
+  private ApplicationEventPublisher eventPublisher;
 
-    @Test
-    void shouldCreateNewUser() {
-        User user = new User("bob@einar.org");
-        Profile profile = new Profile();
-        Location location = new Location();
+  @Test
+  void shouldCreateNewUser() {
+    User user = new User("bob@einar.org");
+    Profile profile = new Profile();
+    Location location = new Location();
 
-        when(locationRepository.save(any(Location.class))).thenReturn(location);
-        when(profileRepository.save(any(Profile.class))).thenReturn(profile);
-        when(userRepository.save(any(User.class))).thenReturn(user);
+    when(locationRepository.save(any(Location.class))).thenReturn(location);
+    when(profileRepository.save(any(Profile.class))).thenReturn(profile);
+    when(userRepository.save(any(User.class))).thenReturn(user);
 
-        userService.create("bob@einar.org");
+    userService.create("bob@einar.org");
 
-        verify(userRepository).existsByEmail("bob@einar.org");
-        verify(userRepository).save(any(User.class));
-        verify(locationRepository).save(any(Location.class));
-        verify(profileRepository).save(any(Profile.class));
-        verify(eventPublisher).publishEvent(any(UserCreated.class));
-        verify(eventPublisher, times(1)).publishEvent(new UserCreated(user.getEmail()));
-    }
+    verify(userRepository).existsByEmail("bob@einar.org");
+    verify(userRepository).save(any(User.class));
+    verify(locationRepository).save(any(Location.class));
+    verify(profileRepository).save(any(Profile.class));
+    verify(eventPublisher).publishEvent(any(UserCreated.class));
+    verify(eventPublisher, times(1)).publishEvent(new UserCreated(user.getEmail()));
+  }
 
-    @Test
-    void exceptionIsThrownWhenCreateUserWithExistingEmail() {
-        String email = "bob@einar.org";
+  @Test
+  void exceptionIsThrownWhenCreateUserWithExistingEmail() {
+    String email = "bob@einar.org";
 
-        when(userRepository.existsByEmail(email)).thenReturn(true);
+    when(userRepository.existsByEmail(email)).thenReturn(true);
 
-        assertThatThrownBy(() -> userService.create(email))
-                .isInstanceOf(ResourceAlreadyExistException.class)
-                .hasMessage("The User identified with 'bob@einar.org' already exists");
-    }
+    assertThatThrownBy(() -> userService.create(email))
+        .isInstanceOf(ResourceAlreadyExistException.class)
+        .hasMessage("The User identified with 'bob@einar.org' already exists");
+  }
 
-    @Test
-    void blankProfileIsAttachedForNewUser() {
-        User alice = new User("alice@foo.com");
-        Profile profile = new Profile();
-        when(userRepository.save(any(User.class))).thenReturn(alice);
-        when(profileRepository.save(any(Profile.class))).thenReturn(profile);
-        when(profileRepository.findByUserId(any(Long.class))).thenReturn(Optional.of(profile));
+  @Test
+  void blankProfileIsAttachedForNewUser() {
+    User alice = new User("alice@foo.com");
+    Profile profile = new Profile();
+    when(userRepository.save(any(User.class))).thenReturn(alice);
+    when(profileRepository.save(any(Profile.class))).thenReturn(profile);
+    when(profileRepository.findByUserId(any(Long.class))).thenReturn(Optional.of(profile));
 
-        userService.create("alice@foo.com");
-        Optional<Profile> profile1 = profileRepository.findByUserId(323L);
+    userService.create("alice@foo.com");
+    Optional<Profile> profile1 = profileRepository.findByUserId(323L);
 
-        // assertThat(user).isNotNull();
-        assertThat(profile1).isNotEmpty();
-        assertThat(profile1).map(Profile::getLocation).isNotNull();
-    }
+    // assertThat(user).isNotNull();
+    assertThat(profile1).isNotEmpty();
+    assertThat(profile1).map(Profile::getLocation).isNotNull();
+  }
 
-    @Test
-    void userActiveStatusIsUpdated() {
-        User bob = new User("bob@foo.com");
-        bob.setActive(false);
-        bob.setId(1L);
-        User alice = new User("alice@foo.com");
-        alice.setActive(true);
-        alice.setId(2L);
-        when(userRepository.findById(1L)).thenReturn(Optional.of(bob));
-        when(userRepository.findById(2L)).thenReturn(Optional.of(alice));
+  @Test
+  void userActiveStatusIsUpdated() {
+    User bob = new User("bob@foo.com");
+    bob.setActive(false);
+    bob.setId(1L);
+    User alice = new User("alice@foo.com");
+    alice.setActive(true);
+    alice.setId(2L);
+    when(userRepository.findById(1L)).thenReturn(Optional.of(bob));
+    when(userRepository.findById(2L)).thenReturn(Optional.of(alice));
 
-        assertDoesNotThrow(() -> userService.toggleUserActiveStatus(bob, 1L));
-        assertDoesNotThrow(() -> userService.toggleUserActiveStatus(alice, 2L));
+    assertDoesNotThrow(() -> userService.toggleUserActiveStatus(bob, 1L));
+    assertDoesNotThrow(() -> userService.toggleUserActiveStatus(alice, 2L));
 
-        assertThat(bob.isActive()).isTrue();
-        assertThat(alice.isActive()).isFalse();
-    }
+    assertThat(bob.isActive()).isTrue();
+    assertThat(alice.isActive()).isFalse();
+  }
 
-    @Test
-    void exceptionIsThrownWhenUpdatingAnotherUserAccount() {
-        User bob = new User("bob@foo.com");
-        bob.setId(1L);
+  @Test
+  void exceptionIsThrownWhenUpdatingAnotherUserAccount() {
+    User bob = new User("bob@foo.com");
+    bob.setId(1L);
 
-        User alice = new User("alice@foo.com");
-        alice.setActive(true);
-        alice.setId(2L);
+    User alice = new User("alice@foo.com");
+    alice.setActive(true);
+    alice.setId(2L);
 
-        when(userRepository.findById(2L)).thenReturn(Optional.of(alice));
+    when(userRepository.findById(2L)).thenReturn(Optional.of(alice));
 
-        assertThatThrownBy(() -> userService.toggleUserActiveStatus(bob, 2L))
-                .isInstanceOf(IllegalAccessException.class);
-    }
+    assertThatThrownBy(() -> userService.toggleUserActiveStatus(bob, 2L))
+        .isInstanceOf(IllegalAccessException.class);
+  }
 
-    @Test
-    void profileIsUpdatedForExistingUser() {
-        User user = new User("bob@foo.com");
-        user.setId(93873L);
-        Profile profile = new Profile();
-        profile.setId(9204L);
-        profile.setUser(user);
-        profile.setLocation(new Location());
+  @Test
+  void profileIsUpdatedForExistingUser() {
+    User user = new User("bob@foo.com");
+    user.setId(93873L);
+    Profile profile = new Profile();
+    profile.setId(9204L);
+    profile.setUser(user);
+    profile.setLocation(new Location());
 
-        ProfileRequest request =
-                new ProfileRequest(
-                        "Bob",
-                        "Smith",
-                        LocalDate.of(1989, 4, 8),
-                        new ProfileRequest.LocationInfo(
-                                12, "street-name", "city", "state", "XXXXXX", "JPN"));
+    ProfileRequest request = new ProfileRequest(
+        "Bob",
+        "Smith",
+        LocalDate.of(1989, 4, 8),
+        new ProfileRequest.LocationInfo(12, "street-name", "city", "state", "XXXXXX", "JPN"));
 
-        when(userRepository.save(any(User.class))).thenReturn(user);
-        when(profileRepository.save(any(Profile.class))).thenReturn(profile);
-        when(profileRepository.findByUserId(any())).thenReturn(Optional.of(profile));
+    when(userRepository.save(any(User.class))).thenReturn(user);
+    when(profileRepository.save(any(Profile.class))).thenReturn(profile);
+    when(profileRepository.findByUserId(any())).thenReturn(Optional.of(profile));
 
-        when(locationRepository.save(any(Location.class))).thenReturn(profile.getLocation());
+    when(locationRepository.save(any(Location.class))).thenReturn(profile.getLocation());
 
-        userService.create(user.getEmail());
+    userService.create(user.getEmail());
 
-        ProfileResponse response = userService.updateProfile(user, request);
+    ProfileResponse response = userService.updateProfile(user, request);
 
-        assertThat(response).isNotNull();
-        assertThat(response.firstName()).isEqualTo("Bob");
-        System.out.println(response);
-    }
+    assertThat(response).isNotNull();
+    assertThat(response.firstName()).isEqualTo("Bob");
+    System.out.println(response);
+  }
 }

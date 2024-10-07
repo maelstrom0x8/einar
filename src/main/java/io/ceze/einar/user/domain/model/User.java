@@ -26,77 +26,80 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Table(name = "users")
 public class User {
 
-    @Id
-    @Column(name = "user_id", columnDefinition = "bigserial")
-    @SequenceGenerator(
-            name = "user_sequence",
-            sequenceName = "user_id_seq",
-            allocationSize = 1,
-            initialValue = 1000)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
-    private Long id;
+  @Id
+  @Column(name = "user_id", columnDefinition = "bigserial")
+  @SequenceGenerator(
+      name = "user_sequence",
+      sequenceName = "user_id_seq",
+      allocationSize = 1,
+      initialValue = 1000)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
+  private Long id;
 
-    @NotEmpty
-    @Email(message = "Email is not valid")
-    private String email;
+  @NotEmpty
+  @Email(message = "Email is not valid")
+  private String email;
 
-    @CreationTimestamp private LocalDateTime createdAt;
+  @CreationTimestamp
+  private LocalDateTime createdAt;
 
-    @UpdateTimestamp private LocalDateTime lastModified;
-    private boolean verified;
-    private boolean active;
+  @UpdateTimestamp
+  private LocalDateTime lastModified;
 
-    public User() {}
+  private boolean verified;
+  private boolean active;
 
-    public User(String email) {
-        this.email = email;
-    }
+  public User() {}
 
-    public Long getId() {
-        return id;
-    }
+  public User(String email) {
+    this.email = email;
+  }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+  public Long getId() {
+    return id;
+  }
 
-    public @NotEmpty @Email(message = "Email is not valid") String getEmail() {
-        return email;
-    }
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-    public void setEmail(@NotEmpty @Email(message = "Email is not valid") String email) {
-        this.email = email;
-    }
+  public @NotEmpty @Email(message = "Email is not valid") String getEmail() {
+    return email;
+  }
 
-    public boolean isVerified() {
-        return verified;
-    }
+  public void setEmail(@NotEmpty @Email(message = "Email is not valid") String email) {
+    this.email = email;
+  }
 
-    public void setVerified(boolean verified) {
-        this.verified = verified;
-    }
+  public boolean isVerified() {
+    return verified;
+  }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
+  public void setVerified(boolean verified) {
+    this.verified = verified;
+  }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
+  public LocalDateTime getCreatedAt() {
+    return createdAt;
+  }
 
-    public LocalDateTime getLastModified() {
-        return lastModified;
-    }
+  public void setCreatedAt(LocalDateTime createdAt) {
+    this.createdAt = createdAt;
+  }
 
-    public void setLastModified(LocalDateTime lastModified) {
-        this.lastModified = lastModified;
-    }
+  public LocalDateTime getLastModified() {
+    return lastModified;
+  }
 
-    public boolean isActive() {
-        return active;
-    }
+  public void setLastModified(LocalDateTime lastModified) {
+    this.lastModified = lastModified;
+  }
 
-    public void setActive(boolean active) {
-        this.active = active;
-    }
+  public boolean isActive() {
+    return active;
+  }
+
+  public void setActive(boolean active) {
+    this.active = active;
+  }
 }
