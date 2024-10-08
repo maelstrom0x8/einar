@@ -15,38 +15,37 @@
  */
 package io.ceze.einar.user.domain.dto;
 
-import io.ceze.einar.user.domain.dto.ProfileRequest.LocationInfo;
 import io.ceze.einar.user.domain.model.Location;
 import io.ceze.einar.user.domain.model.Profile;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public record ProfileResponse(
-        Long profileId,
-        String firstName,
-        String lastName,
-        String email,
-        LocalDate dateOfBirth,
-        LocalDateTime created,
-        LocalDateTime lastModified,
-        LocationInfo locationInfo) {
+    Long profileId,
+    String firstName,
+    String lastName,
+    String email,
+    LocalDate dateOfBirth,
+    LocalDateTime created,
+    LocalDateTime lastModified,
+    LocationInfo locationInfo) {
 
-    public static ProfileResponse from(Profile profile) {
-        Location location = profile.getLocation();
-        return new ProfileResponse(
-                profile.getId(),
-                profile.getFirstName(),
-                profile.getLastName(),
-                profile.getUser().getEmail(),
-                profile.getDateOfBirth(),
-                profile.getCreatedAt(),
-                profile.getLastModified(),
-                new LocationInfo(
-                        location.getStreetNumber(),
-                        location.getStreet(),
-                        location.getCity(),
-                        location.getState(),
-                        location.getPostalCode(),
-                        location.getCountry()));
-    }
+  public static ProfileResponse from(Profile profile) {
+    Location location = profile.getLocation();
+    return new ProfileResponse(
+        profile.getId(),
+        profile.getFirstName(),
+        profile.getLastName(),
+        profile.getUser().getEmail(),
+        profile.getDateOfBirth(),
+        profile.getCreatedAt(),
+        profile.getLastModified(),
+        new LocationInfo(
+            location.getStreetNumber(),
+            location.getStreet(),
+            location.getCity(),
+            location.getState(),
+            location.getPostalCode(),
+            location.getCountry()));
+  }
 }

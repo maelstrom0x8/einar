@@ -15,4 +15,14 @@
  */
 package io.ceze.einar.space.domain.model.dto;
 
-public record NewSpaceRequest() {}
+import io.ceze.einar.space.domain.model.SpaceType;
+import io.ceze.einar.user.domain.dto.LocationInfo;
+import java.math.BigDecimal;
+import java.util.Map;
+
+public record NewSpaceRequest(
+    String descripition,
+    LocationInfo locationInfo,
+    BigDecimal pricing,
+    Map<String, String> metadata,
+    SpaceType type) {}

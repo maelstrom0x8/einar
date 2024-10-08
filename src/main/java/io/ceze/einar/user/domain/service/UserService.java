@@ -16,6 +16,7 @@
 package io.ceze.einar.user.domain.service;
 
 import io.ceze.config.security.AuthenticationService;
+import io.ceze.einar.user.domain.dto.LocationInfo;
 import io.ceze.einar.user.domain.dto.ProfileRequest;
 import io.ceze.einar.user.domain.dto.ProfileResponse;
 import io.ceze.einar.user.domain.model.Location;
@@ -111,7 +112,7 @@ public class UserService {
     profile.setLastName(request.lastName());
     profile.setDateOfBirth(request.dateOfBirth());
     if (request.locationInfo() != null) {
-      ProfileRequest.LocationInfo info = request.locationInfo();
+      LocationInfo info = request.locationInfo();
       log.info("Updating location details <{}>", user.getEmail());
       Location location = profile.getLocation();
       location.setStreetNumber(info.streetNumber());
