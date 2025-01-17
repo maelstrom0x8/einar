@@ -1,0 +1,20 @@
+spring:
+  flyway:
+    enabled: true
+    url: jdbc:tc:postgresql:16://localhost/db?user=user&password=user
+    password: user
+    user: user
+  datasource:
+    url: jdbc:tc:postgresql:16://localhost/db?user=user&password=user
+    username: user
+    password: user
+logging:
+  level:
+    com:
+      zaxxer: WARN
+    org:
+      hibernate: WARN
+      testcontainers: OFF
+      springframework: WARN
+      apache: WARN
+    tc: OFF

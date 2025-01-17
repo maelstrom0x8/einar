@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: einar
+  datasource:
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DATABASE}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
