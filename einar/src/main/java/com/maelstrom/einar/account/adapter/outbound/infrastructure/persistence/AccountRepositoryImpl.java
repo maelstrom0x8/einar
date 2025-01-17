@@ -1,4 +1,4 @@
-package com.maelstrom.einar.account.infrastructure.persistence;
+package com.maelstrom.einar.account.adapter.outbound.infrastructure.persistence;
 
 import com.maelstrom.einar.account.domain.model.Account;
 import com.maelstrom.einar.account.domain.model.AccountId;

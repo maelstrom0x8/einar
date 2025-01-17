@@ -1,4 +1,4 @@
-package com.maelstrom.einar.inventory.adapter.web.resource;
+package com.maelstrom.einar.inventory.adapter.inbound.web.resource;
 
 import com.maelstrom.einar.inventory.application.dto.InventoryResponse;
 import com.maelstrom.einar.inventory.application.dto.ItemResponse;

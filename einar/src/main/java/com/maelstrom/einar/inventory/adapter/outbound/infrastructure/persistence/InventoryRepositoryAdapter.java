@@ -1,4 +1,4 @@
-package com.maelstrom.einar.inventory.infrastructure.persistence;
+package com.maelstrom.einar.inventory.adapter.outbound.infrastructure.persistence;
 
 import com.maelstrom.einar.inventory.domain.model.Inventory;
 import com.maelstrom.einar.inventory.domain.model.InventoryId;

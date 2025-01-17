@@ -1,4 +1,4 @@
-package com.maelstrom.einar.account.adapter.web.resource;
+package com.maelstrom.einar.account.adapter.inbound.web.resource;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

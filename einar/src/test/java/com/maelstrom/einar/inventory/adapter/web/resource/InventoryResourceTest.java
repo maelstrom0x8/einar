@@ -1,5 +1,6 @@
 package com.maelstrom.einar.inventory.adapter.web.resource;
 
+import com.maelstrom.einar.inventory.adapter.inbound.web.resource.InventoryResource;
 import com.maelstrom.einar.inventory.application.service.InventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

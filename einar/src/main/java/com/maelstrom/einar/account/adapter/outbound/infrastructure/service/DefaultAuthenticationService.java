@@ -1,4 +1,4 @@
-package com.maelstrom.einar.account.infrastructure.service;
+package com.maelstrom.einar.account.adapter.outbound.infrastructure.service;
 
 import com.maelstrom.einar.account.application.AuthenticationService;
 import com.maelstrom.einar.account.domain.AccountNotFoundException;
