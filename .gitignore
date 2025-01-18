@@ -312,3 +312,5 @@ flycheck_*.el
 .idea/
 *.sh
 *env*
+.vscode
+*iml
