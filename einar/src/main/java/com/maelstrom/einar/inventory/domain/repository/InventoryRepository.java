@@ -11,10 +11,6 @@ import java.util.Optional;
 
 public interface InventoryRepository extends GenericRepository<Inventory, InventoryId>
 {
-	Inventory save(Inventory inventory);
-
-	Optional<Inventory> findById(InventoryId id);
-
 	List<Item> findItemsByInventoryId(InventoryId id, int offset, int count);
 
 	Optional<Item> findItemBySku(String sku);

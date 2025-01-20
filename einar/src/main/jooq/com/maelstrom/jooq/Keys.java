@@ -31,8 +31,9 @@ public class Keys {
 
     public static final UniqueKey<AccountsRecord> ACCOUNTS_EMAIL_KEY = Internal.createUniqueKey(Accounts.ACCOUNTS, DSL.name("accounts_email_key"), new TableField[] { Accounts.ACCOUNTS.EMAIL }, true);
     public static final UniqueKey<AccountsRecord> ACCOUNTS_PKEY = Internal.createUniqueKey(Accounts.ACCOUNTS, DSL.name("accounts_pkey"), new TableField[] { Accounts.ACCOUNTS.ACCOUNT_ID }, true);
-    public static final UniqueKey<InventoriesRecord> INVENTORIES_NAME_KEY = Internal.createUniqueKey(Inventories.INVENTORIES, DSL.name("inventories_name_key"), new TableField[] { Inventories.INVENTORIES.NAME }, true);
+    public static final UniqueKey<InventoriesRecord> INVENTORIES_ACCOUNT_ID_NAME_KEY = Internal.createUniqueKey(Inventories.INVENTORIES, DSL.name("inventories_account_id_name_key"), new TableField[] { Inventories.INVENTORIES.ACCOUNT_ID, Inventories.INVENTORIES.NAME }, true);
     public static final UniqueKey<InventoriesRecord> INVENTORIES_PKEY = Internal.createUniqueKey(Inventories.INVENTORIES, DSL.name("inventories_pkey"), new TableField[] { Inventories.INVENTORIES.INVENTORY_ID }, true);
+    public static final UniqueKey<ItemsRecord> ITEMS_INVENTORY_ID_NAME_KEY = Internal.createUniqueKey(Items.ITEMS, DSL.name("items_inventory_id_name_key"), new TableField[] { Items.ITEMS.INVENTORY_ID, Items.ITEMS.NAME }, true);
     public static final UniqueKey<ItemsRecord> ITEMS_NAME_KEY = Internal.createUniqueKey(Items.ITEMS, DSL.name("items_name_key"), new TableField[] { Items.ITEMS.NAME }, true);
     public static final UniqueKey<ItemsRecord> ITEMS_PKEY = Internal.createUniqueKey(Items.ITEMS, DSL.name("items_pkey"), new TableField[] { Items.ITEMS.ITEM_ID }, true);
     public static final UniqueKey<ItemsRecord> ITEMS_SKU_KEY = Internal.createUniqueKey(Items.ITEMS, DSL.name("items_sku_key"), new TableField[] { Items.ITEMS.SKU }, true);

@@ -7,7 +7,6 @@ import org.springframework.modulith.core.ApplicationModules;
 
 public class ApplicationTests extends AbstractIT
 {
-
 	@Test
 	void contextLoads()
 	{

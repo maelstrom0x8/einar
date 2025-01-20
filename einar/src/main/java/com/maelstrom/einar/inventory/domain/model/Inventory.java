@@ -32,6 +32,25 @@ public class Inventory
 		return new Inventory(accountId, name, description);
 	}
 
+	public void setId(InventoryId id)
+	{
+		this.id = id;
+	}
+
+	public void setCreatedAt(LocalDateTime createdAt)
+	{
+		this.createdAt = createdAt;
+	}
+
+	public void setLastUpdated(LocalDateTime lastUpdated)
+	{
+		this.lastUpdated = lastUpdated;
+	}
+
+
+
+
+
 	public void addItem(@NotNull Item item) throws IllegalAccessException
 	{
 		if (state.equals(InventoryState.ARCHIVED) || state.equals(InventoryState.CLOSED))
@@ -102,7 +121,7 @@ public class Inventory
 		return Collections.unmodifiableList(items);
 	}
 
-	String getDescription()
+	public String getDescription()
 	{
 		return description;
 	}

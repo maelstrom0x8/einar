@@ -2,10 +2,11 @@ package com.maelstrom.einar.account.domain.repository;
 
 import com.maelstrom.einar.account.domain.model.Account;
 import com.maelstrom.einar.account.domain.model.AccountId;
+import com.maelstrom.einar.common.data.GenericRepository;
 
 import java.util.Optional;
 
-public interface AccountRepository
+public interface AccountRepository extends GenericRepository<Account, AccountId>
 {
 	Account save(Account account);
 

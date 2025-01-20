@@ -17,4 +17,5 @@ logging:
       testcontainers: OFF
       springframework: WARN
       apache: WARN
+      jooq: DEBUG
     tc: OFF

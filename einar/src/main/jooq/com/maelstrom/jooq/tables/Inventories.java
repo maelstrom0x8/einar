@@ -6,6 +6,7 @@ package com.maelstrom.jooq.tables;
 
 import com.maelstrom.jooq.Keys;
 import com.maelstrom.jooq.Public;
+import com.maelstrom.jooq.enums.State;
 import com.maelstrom.jooq.tables.records.InventoriesRecord;
 
 import java.time.LocalDateTime;
@@ -15,12 +16,12 @@ import java.util.function.Function;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
-import org.jooq.Function5;
+import org.jooq.Function8;
 import org.jooq.Identity;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Records;
-import org.jooq.Row5;
+import org.jooq.Row8;
 import org.jooq.Schema;
 import org.jooq.SelectField;
 import org.jooq.Table;
@@ -69,6 +70,16 @@ public class Inventories extends TableImpl<InventoriesRecord> {
     public final TableField<InventoriesRecord, String> NAME = createField(DSL.name("name"), SQLDataType.VARCHAR(100).nullable(false), this, "");
 
     /**
+     * The column <code>public.inventories.description</code>.
+     */
+    public final TableField<InventoriesRecord, String> DESCRIPTION = createField(DSL.name("description"), SQLDataType.CLOB, this, "");
+
+    /**
+     * The column <code>public.inventories.state</code>.
+     */
+    public final TableField<InventoriesRecord, State> STATE = createField(DSL.name("state"), SQLDataType.VARCHAR.nullable(false).defaultValue(DSL.field(DSL.raw("'OPEN'::state"), SQLDataType.VARCHAR)).asEnumDataType(com.maelstrom.jooq.enums.State.class), this, "");
+
+    /**
      * The column <code>public.inventories.created_at</code>.
      */
     public final TableField<InventoriesRecord, LocalDateTime> CREATED_AT = createField(DSL.name("created_at"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.LOCALDATETIME)), this, "");
@@ -76,7 +87,12 @@ public class Inventories extends TableImpl<InventoriesRecord> {
     /**
      * The column <code>public.inventories.last_updated</code>.
      */
-    public final TableField<InventoriesRecord, LocalDateTime> LAST_UPDATED = createField(DSL.name("last_updated"), SQLDataType.LOCALDATETIME(6).nullable(false), this, "");
+    public final TableField<InventoriesRecord, LocalDateTime> LAST_UPDATED = createField(DSL.name("last_updated"), SQLDataType.LOCALDATETIME(6).nullable(false).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.LOCALDATETIME)), this, "");
+
+    /**
+     * The column <code>public.inventories.tenant_id</code>.
+     */
+    public final TableField<InventoriesRecord, Integer> TENANT_ID = createField(DSL.name("tenant_id"), SQLDataType.INTEGER.nullable(false), this, "");
 
     private Inventories(Name alias, Table<InventoriesRecord> aliased) {
         this(alias, aliased, null);
@@ -128,7 +144,7 @@ public class Inventories extends TableImpl<InventoriesRecord> {
 
     @Override
     public List<UniqueKey<InventoriesRecord>> getUniqueKeys() {
-        return Arrays.asList(Keys.INVENTORIES_NAME_KEY);
+        return Arrays.asList(Keys.INVENTORIES_ACCOUNT_ID_NAME_KEY);
     }
 
     @Override
@@ -188,18 +204,18 @@ public class Inventories extends TableImpl<InventoriesRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row5 type methods
+    // Row8 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row5<Integer, Integer, String, LocalDateTime, LocalDateTime> fieldsRow() {
-        return (Row5) super.fieldsRow();
+    public Row8<Integer, Integer, String, String, State, LocalDateTime, LocalDateTime, Integer> fieldsRow() {
+        return (Row8) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function5<? super Integer, ? super Integer, ? super String, ? super LocalDateTime, ? super LocalDateTime, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function8<? super Integer, ? super Integer, ? super String, ? super String, ? super State, ? super LocalDateTime, ? super LocalDateTime, ? super Integer, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -207,7 +223,7 @@ public class Inventories extends TableImpl<InventoriesRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function5<? super Integer, ? super Integer, ? super String, ? super LocalDateTime, ? super LocalDateTime, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function8<? super Integer, ? super Integer, ? super String, ? super String, ? super State, ? super LocalDateTime, ? super LocalDateTime, ? super Integer, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

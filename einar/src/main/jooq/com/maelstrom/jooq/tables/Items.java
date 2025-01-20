@@ -143,7 +143,7 @@ public class Items extends TableImpl<ItemsRecord> {
 
     @Override
     public List<UniqueKey<ItemsRecord>> getUniqueKeys() {
-        return Arrays.asList(Keys.ITEMS_NAME_KEY, Keys.ITEMS_SKU_KEY);
+        return Arrays.asList(Keys.ITEMS_INVENTORY_ID_NAME_KEY, Keys.ITEMS_NAME_KEY, Keys.ITEMS_SKU_KEY);
     }
 
     @Override

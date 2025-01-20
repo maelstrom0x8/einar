@@ -15,12 +15,12 @@ import java.util.function.Function;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
-import org.jooq.Function4;
+import org.jooq.Function5;
 import org.jooq.Identity;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Records;
-import org.jooq.Row4;
+import org.jooq.Row5;
 import org.jooq.Schema;
 import org.jooq.SelectField;
 import org.jooq.Table;
@@ -57,6 +57,11 @@ public class Accounts extends TableImpl<AccountsRecord> {
      * The column <code>public.accounts.account_id</code>.
      */
     public final TableField<AccountsRecord, Integer> ACCOUNT_ID = createField(DSL.name("account_id"), SQLDataType.INTEGER.nullable(false).identity(true), this, "");
+
+    /**
+     * The column <code>public.accounts.tenant_id</code>.
+     */
+    public final TableField<AccountsRecord, Integer> TENANT_ID = createField(DSL.name("tenant_id"), SQLDataType.INTEGER.nullable(false), this, "");
 
     /**
      * The column <code>public.accounts.name</code>.
@@ -166,18 +171,18 @@ public class Accounts extends TableImpl<AccountsRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row4 type methods
+    // Row5 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row4<Integer, String, String, LocalDateTime> fieldsRow() {
-        return (Row4) super.fieldsRow();
+    public Row5<Integer, Integer, String, String, LocalDateTime> fieldsRow() {
+        return (Row5) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function4<? super Integer, ? super String, ? super String, ? super LocalDateTime, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function5<? super Integer, ? super Integer, ? super String, ? super String, ? super LocalDateTime, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -185,7 +190,7 @@ public class Accounts extends TableImpl<AccountsRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function4<? super Integer, ? super String, ? super String, ? super LocalDateTime, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function5<? super Integer, ? super Integer, ? super String, ? super String, ? super LocalDateTime, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

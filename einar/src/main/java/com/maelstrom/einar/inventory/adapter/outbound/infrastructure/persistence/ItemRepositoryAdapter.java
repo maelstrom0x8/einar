@@ -60,6 +60,12 @@ public class ItemRepositoryAdapter implements ItemRepository
 			.fetchOptional().map(mapToItem);
 	}
 
+	@Override
+	public List<Item> findAll()
+	{
+		return List.of();
+	}
+
 	private static final Function<Record7<Integer, String, String, String, Integer, LocalDateTime, LocalDateTime>, Item> mapToItem = r ->
 	{
 		Item item = Item.create(new InventoryId(r.get(ITEMS.INVENTORY_ID), null),
