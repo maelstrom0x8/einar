@@ -53,6 +53,14 @@ class InventoryRepositoryAdapter implements InventoryRepository
 	}
 
 	@Override
+	public void deleteById(InventoryId inventoryId)
+	{
+		ctx.deleteFrom(INVENTORIES)
+						.where(INVENTORIES.INVENTORY_ID.eq(inventoryId.id()))
+						.execute();
+	}
+
+	@Override
 	public List<Item> findItemsByInventoryId(InventoryId id, int offset, int count)
 	{
 		return List.of();

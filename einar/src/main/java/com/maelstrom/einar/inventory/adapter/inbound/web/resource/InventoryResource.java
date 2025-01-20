@@ -1,18 +1,23 @@
 package com.maelstrom.einar.inventory.adapter.inbound.web.resource;
 
+import com.maelstrom.einar.inventory.adapter.inbound.web.resource.dto.InventoryUpdateRequest;
+import com.maelstrom.einar.inventory.adapter.inbound.web.resource.dto.ItemUpdateRequest;
 import com.maelstrom.einar.inventory.application.dto.InventoryResponse;
 import com.maelstrom.einar.inventory.application.dto.ItemResponse;
 import com.maelstrom.einar.inventory.application.dto.NewInventoryRequest;
+import com.maelstrom.einar.inventory.application.dto.NewItemRequest;
 import com.maelstrom.einar.inventory.application.service.InventoryService;
 import com.maelstrom.einar.inventory.domain.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -23,7 +28,10 @@ public class InventoryResource
 	private static final Logger log = LoggerFactory.getLogger(InventoryResource.class);
 	private final InventoryService inventoryService;
 
-	public InventoryResource(InventoryService inventoryService) {this.inventoryService = inventoryService;}
+	public InventoryResource(InventoryService inventoryService)
+	{
+		this.inventoryService = inventoryService;
+	}
 
 	@PostMapping
 	public ResponseEntity<Integer> createInventory(Integer accountId, @RequestBody NewInventoryRequest request)
@@ -32,7 +40,7 @@ public class InventoryResource
 		InventoryId id = inventoryService.createInventory(inventory);
 
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("{id}").buildAndExpand(id.id())
-						.toUri();
+			.toUri();
 		return ResponseEntity.created(uri).build();
 	}
 
@@ -50,24 +58,94 @@ public class InventoryResource
 		return inventoryService.statistics(itemsIds);
 	}
 
-	@GetMapping("/{id}/items/{sku}")
-	public ResponseEntity<?> fetchItemBySku(Integer accountId, @PathVariable("id") Integer inventoryId, @PathVariable("sku") String sku)
+	@PostMapping("/{id}/items")
+	public ResponseEntity<?> addItemsToInventory(Integer accountId, @PathVariable("id") Integer inventoryId,
+																							 @RequestBody List<NewItemRequest> items)
 	{
-		ItemId itemId = new ItemId(inventoryId, sku);
+		InventoryId id = new InventoryId(inventoryId, accountId);
+		Inventory inventory = inventoryService.getInventoryById(id);
+		List<Item> _items = items.stream().map(e -> Item.create(new InventoryId(inventoryId, accountId),
+			e.name(), e.description(), e.stockThreshold())).toList();
+		try
+		{
+			inventoryService.addItemsToInventory(id, _items);
+			return ResponseEntity.status(HttpStatus.CREATED).build();
+		} catch (IllegalAccessException e)
+		{
+			log.error("Unable to add items to inventory", e);
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
+
+	@GetMapping("/{id}/items/{sku}")
+	public ResponseEntity<?> fetchItemBySku(Integer accountId, @PathVariable("id") Integer inventoryId,
+																					@PathVariable("sku") String sku)
+	{
+		ItemId itemId = new ItemId(inventoryId, Sku.valueOf(sku));
 		Item item = inventoryService.getItem(itemId);
 		return ResponseEntity.ok(ItemResponse.from(item));
 	}
 
-	/*
-	 * POST /{id}/archive?toggle=true (domain_use_case)
-	 * DELETE /{id} // hides from fetching but still remains in the database for auditing
-	 * PUT /{id}/update --data = InventoryUpdateRequest{}
-	 * GET /{id}/items?page=N&count=M
-	 * POST /{id}/items
-	 * DELETE /{id}/items/{sku}
-	 * GET /{id}/items/{sku}  // https://api.einar.com/v1/inventory/23535/items/KL787J
-	 * PUT /{id}/items/{sku} --data = ItemUpdateRequest{}
-	 * GET /{id}/stock?ids=[i1, i2, i3,..., in]
-	 **/
+	@PostMapping("/{id}/archive")
+	public ResponseEntity<?> toggleArchiveInventory(@PathVariable("id") Integer inventoryId, @RequestParam("action") boolean toggle)
+	{
+		InventoryId id = new InventoryId(inventoryId, null);
+		Inventory inventory = inventoryService.getInventoryById(id);
+		inventory.setState(toggle ? InventoryState.ARCHIVED : InventoryState.OPEN);
+		inventoryService.setInventoryState(id, inventory.getState());
+		return ResponseEntity.ok().build();
+	}
+
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> deleteInventory(Integer accountId, @PathVariable("id") Integer inventoryId)
+	{
+		InventoryId id = new InventoryId(inventoryId, accountId);
+		inventoryService.deleteInventory(id);
+		return ResponseEntity.noContent().build();
+	}
+
+	@PutMapping("/{id}/update")
+	public ResponseEntity<?> updateInventory(Integer accountId, @PathVariable("id") Integer inventoryId,
+																					 @RequestBody InventoryUpdateRequest request)
+	{
+		InventoryId id = new InventoryId(inventoryId, accountId);
+		Inventory inventory = inventoryService.getInventoryById(id);
+		inventory.rename(request.name());
+		inventory.setDescription(request.description());
+		inventoryService.setInventoryState(id, inventory.getState());
+		return ResponseEntity.ok().build();
+	}
+
+	@GetMapping("/{id}/items")
+	public ResponseEntity<List<ItemResponse>> getItems(Integer accountId, @PathVariable("id") Integer inventoryId, @RequestParam("page") int page,
+																										 @RequestParam("count") int count)
+	{
+		InventoryId id = new InventoryId(inventoryId, accountId);
+		List<Item> items = inventoryService.getItems(id, page * count, count);
+		return ResponseEntity.ok(items.stream().map(ItemResponse::from).toList());
+	}
+
+	@DeleteMapping("/{id}/items/{sku}")
+	public ResponseEntity<?> deleteItem(@PathVariable("id") Integer inventoryId, @PathVariable("sku") String sku)
+	{
+		ItemId itemId = new ItemId(inventoryId, Sku.valueOf(sku));
+		inventoryService.removeItem(itemId);
+		return ResponseEntity.noContent().build();
+	}
+
+	@PutMapping("/{id}/items/{sku}")
+	public ResponseEntity<?> updateItem(@PathVariable("id") Integer inventoryId, @PathVariable("sku") String sku, @RequestBody ItemUpdateRequest request)
+	{
+		ItemId itemId = new ItemId(inventoryId, Sku.valueOf(sku));
+
+		inventoryService.updateItem(itemId, request.name(), request.description(), request.stockThreshold());
+		return ResponseEntity.ok().build();
+	}
+
+	@GetMapping("/{id}/stock")
+	public ResponseEntity<Collection<StockDetail>> getStock(@PathVariable("id") Integer inventoryId, @RequestParam("ids") Set<Integer> itemsIds)
+	{
+		return ResponseEntity.ok(inventoryService.statistics(itemsIds));
+	}
 
 }

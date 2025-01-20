@@ -6,8 +6,10 @@ package com.maelstrom.jooq;
 
 import com.maelstrom.jooq.tables.Accounts;
 import com.maelstrom.jooq.tables.Inventories;
+import com.maelstrom.jooq.tables.Items;
 import com.maelstrom.jooq.tables.records.AccountsRecord;
 import com.maelstrom.jooq.tables.records.InventoriesRecord;
+import com.maelstrom.jooq.tables.records.ItemsRecord;
 
 import org.jooq.ForeignKey;
 import org.jooq.TableField;
@@ -31,10 +33,14 @@ public class Keys {
     public static final UniqueKey<AccountsRecord> ACCOUNTS_PKEY = Internal.createUniqueKey(Accounts.ACCOUNTS, DSL.name("accounts_pkey"), new TableField[] { Accounts.ACCOUNTS.ACCOUNT_ID }, true);
     public static final UniqueKey<InventoriesRecord> INVENTORIES_NAME_KEY = Internal.createUniqueKey(Inventories.INVENTORIES, DSL.name("inventories_name_key"), new TableField[] { Inventories.INVENTORIES.NAME }, true);
     public static final UniqueKey<InventoriesRecord> INVENTORIES_PKEY = Internal.createUniqueKey(Inventories.INVENTORIES, DSL.name("inventories_pkey"), new TableField[] { Inventories.INVENTORIES.INVENTORY_ID }, true);
+    public static final UniqueKey<ItemsRecord> ITEMS_NAME_KEY = Internal.createUniqueKey(Items.ITEMS, DSL.name("items_name_key"), new TableField[] { Items.ITEMS.NAME }, true);
+    public static final UniqueKey<ItemsRecord> ITEMS_PKEY = Internal.createUniqueKey(Items.ITEMS, DSL.name("items_pkey"), new TableField[] { Items.ITEMS.ITEM_ID }, true);
+    public static final UniqueKey<ItemsRecord> ITEMS_SKU_KEY = Internal.createUniqueKey(Items.ITEMS, DSL.name("items_sku_key"), new TableField[] { Items.ITEMS.SKU }, true);
 
     // -------------------------------------------------------------------------
     // FOREIGN KEY definitions
     // -------------------------------------------------------------------------
 
     public static final ForeignKey<InventoriesRecord, AccountsRecord> INVENTORIES__FK_ACCOUNT = Internal.createForeignKey(Inventories.INVENTORIES, DSL.name("fk_account"), new TableField[] { Inventories.INVENTORIES.ACCOUNT_ID }, Keys.ACCOUNTS_PKEY, new TableField[] { Accounts.ACCOUNTS.ACCOUNT_ID }, true);
+    public static final ForeignKey<ItemsRecord, InventoriesRecord> ITEMS__FK_INVENTORY = Internal.createForeignKey(Items.ITEMS, DSL.name("fk_inventory"), new TableField[] { Items.ITEMS.INVENTORY_ID }, Keys.INVENTORIES_PKEY, new TableField[] { Inventories.INVENTORIES.INVENTORY_ID }, true);
 }

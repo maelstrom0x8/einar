@@ -6,6 +6,7 @@ package com.maelstrom.jooq;
 
 import com.maelstrom.jooq.tables.Accounts;
 import com.maelstrom.jooq.tables.Inventories;
+import com.maelstrom.jooq.tables.Items;
 
 import java.util.Arrays;
 import java.util.List;
@@ -39,6 +40,11 @@ public class Public extends SchemaImpl {
     public final Inventories INVENTORIES = Inventories.INVENTORIES;
 
     /**
+     * The table <code>public.items</code>.
+     */
+    public final Items ITEMS = Items.ITEMS;
+
+    /**
      * No further instances allowed
      */
     private Public() {
@@ -55,7 +61,8 @@ public class Public extends SchemaImpl {
     public final List<Table<?>> getTables() {
         return Arrays.asList(
             Accounts.ACCOUNTS,
-            Inventories.INVENTORIES
+            Inventories.INVENTORIES,
+            Items.ITEMS
         );
     }
 }

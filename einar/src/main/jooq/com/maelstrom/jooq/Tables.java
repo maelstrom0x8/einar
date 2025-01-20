@@ -6,6 +6,7 @@ package com.maelstrom.jooq;
 
 import com.maelstrom.jooq.tables.Accounts;
 import com.maelstrom.jooq.tables.Inventories;
+import com.maelstrom.jooq.tables.Items;
 
 
 /**
@@ -23,4 +24,9 @@ public class Tables {
      * The table <code>public.inventories</code>.
      */
     public static final Inventories INVENTORIES = Inventories.INVENTORIES;
+
+    /**
+     * The table <code>public.items</code>.
+     */
+    public static final Items ITEMS = Items.ITEMS;
 }

@@ -7,4 +7,9 @@ public record Sku(String value)
 	{
 		return null;
 	}
+
+	public static Sku valueOf(String sku)
+	{
+		return new Sku(sku);
+	}
 }

@@ -2,25 +2,31 @@ package com.maelstrom.einar.inventory.domain.model;
 
 import jakarta.validation.constraints.NotNull;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Item
 {
 	private ItemId id;
 	private InventoryId inventoryId;
-	private String name;
-	private String description;
-	private Sku sku;
-	private int stockThreshold;
+	private Details details;
 
-	public Item() {}
+	public static Item create(InventoryId inventoryId, String name, String description, int stockThreshold)
+	{
+		Item item = new Item(name, description, stockThreshold);
+		item.inventoryId = inventoryId;
+		return item;
+	}
 
-	public Item(String name, String description, int stockThreshold) {
-		this.name = name;
-		this.description = description;
-		this.stockThreshold = stockThreshold;
+	private Item(String name, String description, int stockThreshold)
+	{
+		updateDetails(name, description, stockThreshold);
+		var sku = Sku.generate(this);
+		this.id = ItemId.of(null, sku);
+	}
 
-		this.sku = Sku.generate(this);
+	public record  Details(String name, String description, int stockThreshold, LocalDateTime createdAt, LocalDateTime lastUpdated)
+	{
 	}
 
 	public ItemId getId()
@@ -28,59 +34,24 @@ public class Item
 		return id;
 	}
 
-	void setId(ItemId id)
+	public void setId(ItemId id)
 	{
 		this.id = id;
 	}
 
-	InventoryId getInventoryId()
+	public InventoryId getInventoryId()
 	{
 		return inventoryId;
 	}
 
-	void setInventoryId(InventoryId inventoryId)
+	public Details getDetails()
 	{
-		this.inventoryId = inventoryId;
+		return details;
 	}
 
-	String getName()
+	public void updateDetails(String name, String description, int stockThreshold)
 	{
-		return name;
-	}
-
-	void setName(String name)
-	{
-		this.name = name;
-	}
-
-	String getDescription()
-	{
-		return description;
-	}
-
-	void setDescription(String description)
-	{
-		this.description = description;
-	}
-
-	Sku getSku()
-	{
-		return sku;
-	}
-
-	void setSku(Sku sku)
-	{
-		this.sku = sku;
-	}
-
-	int getStockThreshold()
-	{
-		return stockThreshold;
-	}
-
-	void setStockThreshold(int stockThreshold)
-	{
-		this.stockThreshold = stockThreshold;
+		this.details = new Details(name, description, stockThreshold, LocalDateTime.now(), null);
 	}
 
 	public void assignToInventory(@NotNull InventoryId inventoryId)
@@ -93,12 +64,13 @@ public class Item
 	{
 		if (this == o) return true;
 		if (!(o instanceof Item item)) return false;
-		return Objects.equals(id, item.id) && Objects.equals(inventoryId, item.inventoryId) && Objects.equals(name, item.name) && Objects.equals(sku, item.sku);
+		return Objects.equals(id, item.id) && Objects.equals(inventoryId, item.inventoryId)
+			&& Objects.equals(details, item.details) && Objects.equals(id.sku(), item.id.sku());
 	}
 
 	@Override
 	public int hashCode()
 	{
-		return Objects.hash(id, inventoryId, name, sku);
+		return Objects.hash(id, inventoryId);
 	}
 }
