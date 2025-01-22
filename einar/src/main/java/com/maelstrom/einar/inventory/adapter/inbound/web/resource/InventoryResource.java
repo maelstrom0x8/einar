@@ -40,8 +40,7 @@ public class InventoryResource
 		Inventory inventory = Inventory.open(accountId, request.name(), request.description());
 		InventoryId id = inventoryService.createInventory(inventory);
 
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("{id}").buildAndExpand(id.id())
-			.toUri();
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id.id()).toUri();
 		return ResponseEntity.created(uri).build();
 	}
 
@@ -63,13 +62,11 @@ public class InventoryResource
 	}
 
 	@PostMapping("/{id}/items")
-	public ResponseEntity<?> addItemsToInventory(@AuthID Integer accountId, @PathVariable("id") Integer inventoryId,
-																							 @RequestBody List<NewItemRequest> items)
+	public ResponseEntity<?> addItemsToInventory(@AuthID Integer accountId, @PathVariable("id") Integer inventoryId, @RequestBody List<NewItemRequest> items)
 	{
 		InventoryId id = new InventoryId(inventoryId, accountId);
 		Inventory inventory = inventoryService.getInventoryById(id);
-		List<Item> _items = items.stream().map(e -> Item.create(new InventoryId(inventoryId, accountId),
-			e.name(), e.description(), e.stockThreshold())).toList();
+		List<Item> _items = items.stream().map(e -> Item.create(new InventoryId(inventoryId, accountId), e.name(), e.description(), e.stockThreshold())).toList();
 		try
 		{
 			inventoryService.addItemsToInventory(id, _items);
@@ -82,10 +79,10 @@ public class InventoryResource
 	}
 
 	@GetMapping("/{id}/items/{sku}")
-	public ResponseEntity<?> fetchItemBySku(@AuthID Integer accountId, @PathVariable("id") Integer inventoryId,
-																					@PathVariable("sku") String sku)
+	public ResponseEntity<?> fetchItemBySku(@AuthID Integer accountId, @PathVariable("id") Integer inventoryId, @PathVariable("sku") String sku)
 	{
-		ItemId itemId = new ItemId(inventoryId, Sku.valueOf(sku));
+		InventoryId _inventoryId = new InventoryId(inventoryId, accountId);
+		ItemId itemId = new ItemId(Sku.valueOf(sku), _inventoryId);
 		Item item = inventoryService.getItem(itemId);
 		return ResponseEntity.ok(ItemResponse.from(item));
 	}
@@ -109,8 +106,7 @@ public class InventoryResource
 	}
 
 	@PutMapping("/{id}/update")
-	public ResponseEntity<?> updateInventory(Integer accountId, @PathVariable("id") Integer inventoryId,
-																					 @RequestBody InventoryUpdateRequest request)
+	public ResponseEntity<?> updateInventory(Integer accountId, @PathVariable("id") Integer inventoryId, @RequestBody InventoryUpdateRequest request)
 	{
 		InventoryId id = new InventoryId(inventoryId, accountId);
 		Inventory inventory = inventoryService.getInventoryById(id);
@@ -121,8 +117,7 @@ public class InventoryResource
 	}
 
 	@GetMapping("/{id}/items")
-	public ResponseEntity<List<ItemResponse>> getItems(Integer accountId, @PathVariable("id") Integer inventoryId, @RequestParam("page") int page,
-																										 @RequestParam("count") int count)
+	public ResponseEntity<List<ItemResponse>> getItems(Integer accountId, @PathVariable("id") Integer inventoryId, @RequestParam("page") int page, @RequestParam("count") int count)
 	{
 		InventoryId id = new InventoryId(inventoryId, accountId);
 		List<Item> items = inventoryService.getItems(id, page * count, count);
@@ -130,17 +125,19 @@ public class InventoryResource
 	}
 
 	@DeleteMapping("/{id}/items/{sku}")
-	public ResponseEntity<?> deleteItem(@PathVariable("id") Integer inventoryId, @PathVariable("sku") String sku)
+	public ResponseEntity<?> deleteItem(@AuthID Integer accountId, @PathVariable("id") Integer inventoryId, @PathVariable("sku") String sku)
 	{
-		ItemId itemId = new ItemId(inventoryId, Sku.valueOf(sku));
+		InventoryId _inventoryId = new InventoryId(inventoryId, accountId);
+		ItemId itemId = new ItemId(Sku.valueOf(sku), _inventoryId);
 		inventoryService.removeItem(itemId);
 		return ResponseEntity.noContent().build();
 	}
 
 	@PutMapping("/{id}/items/{sku}")
-	public ResponseEntity<?> updateItem(@PathVariable("id") Integer inventoryId, @PathVariable("sku") String sku, @RequestBody ItemUpdateRequest request)
+	public ResponseEntity<?> updateItem(@AuthID Integer accountId, @PathVariable("id") Integer inventoryId, @PathVariable("sku") String sku, @RequestBody ItemUpdateRequest request)
 	{
-		ItemId itemId = new ItemId(inventoryId, Sku.valueOf(sku));
+		InventoryId _inventoryId = new InventoryId(inventoryId, accountId);
+		ItemId itemId = new ItemId(Sku.valueOf(sku), _inventoryId);
 
 		inventoryService.updateItem(itemId, request.name(), request.description(), request.stockThreshold());
 		return ResponseEntity.ok().build();

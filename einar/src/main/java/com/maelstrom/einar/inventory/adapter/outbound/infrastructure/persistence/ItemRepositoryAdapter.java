@@ -3,11 +3,10 @@ package com.maelstrom.einar.inventory.adapter.outbound.infrastructure.persistenc
 import com.maelstrom.einar.inventory.domain.model.InventoryId;
 import com.maelstrom.einar.inventory.domain.model.Item;
 import com.maelstrom.einar.inventory.domain.model.ItemId;
-import com.maelstrom.einar.inventory.domain.model.Sku;
 import com.maelstrom.einar.inventory.domain.repository.ItemRepository;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
-import org.jooq.Record7;
+import org.jooq.Record8;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -15,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
+import static com.maelstrom.jooq.tables.Inventories.INVENTORIES;
 import static com.maelstrom.jooq.tables.Items.ITEMS;
 
 
@@ -33,7 +33,6 @@ public class ItemRepositoryAdapter implements ItemRepository
 	{
 		Item.Details details = item.getDetails();
 		Record1<Integer> _r = ctx.insertInto(ITEMS)
-			.set(ITEMS.ITEM_ID, item.getId().id())
 			.set(ITEMS.SKU, item.getId().sku().toString())
 			.set(ITEMS.NAME, details.name())
 			.set(ITEMS.DESCRIPTION, details.description())
@@ -43,10 +42,7 @@ public class ItemRepositoryAdapter implements ItemRepository
 			.set(ITEMS.LAST_UPDATED, details.lastUpdated())
 			.returningResult(ITEMS.ITEM_ID).fetchOne();
 
-		if (_r != null)
-			item.setId(ItemId.of(_r.value1(), item.getId().sku()));
-
-		return null;
+		return item;
 	}
 
 	@Override
@@ -54,9 +50,13 @@ public class ItemRepositoryAdapter implements ItemRepository
 	{
 		if (itemId == null)
 			throw new IllegalArgumentException("itemId cannot be null");
-		return ctx.select(ITEMS.ITEM_ID, ITEMS.SKU, ITEMS.NAME, ITEMS.DESCRIPTION, ITEMS.THRESHOLD, ITEMS.CREATED_AT, ITEMS.LAST_UPDATED)
+//		var _invId = itemId.inventoryId().id();
+		var _acctId = itemId.inventoryId().accountId();
+		return ctx.select(ITEMS.ITEM_ID, ITEMS.INVENTORY_ID, ITEMS.SKU, ITEMS.NAME, ITEMS.DESCRIPTION, ITEMS.THRESHOLD,
+				ITEMS.CREATED_AT, ITEMS.LAST_UPDATED)
 			.from(ITEMS)
-			.where(ITEMS.ITEM_ID.eq(itemId.id()).or(ITEMS.SKU.eq(itemId.sku().toString())))
+			.join(INVENTORIES).on(ITEMS.INVENTORY_ID.eq(INVENTORIES.INVENTORY_ID))
+			.where(ITEMS.SKU.eq(itemId.sku().toString()).and(INVENTORIES.ACCOUNT_ID.eq(_acctId)))
 			.fetchOptional().map(mapToItem);
 	}
 
@@ -66,18 +66,19 @@ public class ItemRepositoryAdapter implements ItemRepository
 		return List.of();
 	}
 
-	private static final Function<Record7<Integer, String, String, String, Integer, LocalDateTime, LocalDateTime>, Item> mapToItem = r ->
+	private static final Function<Record8<Integer, Integer, String, String, String, Integer, LocalDateTime, LocalDateTime>, Item> mapToItem = r ->
 	{
 		Item item = Item.create(new InventoryId(r.get(ITEMS.INVENTORY_ID), null),
 			r.get(ITEMS.NAME), r.get(ITEMS.DESCRIPTION), r.get(ITEMS.THRESHOLD));
-		item.setId(ItemId.of(r.get(ITEMS.ITEM_ID), Sku.valueOf(r.get(ITEMS.SKU))));
+//		item.setId(ItemId.of(Sku.valueOf(r.get(ITEMS.SKU), new InventoryId(null, null))));
 		return item;
 	};
 
 	@Override
 	public List<Item> findAllByInventoryId(InventoryId inventoryId)
 	{
-		return ctx.select(ITEMS.ITEM_ID, ITEMS.SKU, ITEMS.NAME, ITEMS.DESCRIPTION, ITEMS.THRESHOLD, ITEMS.CREATED_AT, ITEMS.LAST_UPDATED)
+		return ctx.select(ITEMS.ITEM_ID, ITEMS.INVENTORY_ID, ITEMS.SKU, ITEMS.NAME, ITEMS.DESCRIPTION, ITEMS.THRESHOLD,
+				ITEMS.CREATED_AT, ITEMS.LAST_UPDATED)
 			.from(ITEMS).where(ITEMS.INVENTORY_ID.eq(inventoryId.id()))
 			.fetch().map(mapToItem::apply);
 	}
@@ -86,14 +87,15 @@ public class ItemRepositoryAdapter implements ItemRepository
 	public void deleteById(ItemId itemId)
 	{
 		ctx.deleteFrom(ITEMS)
-			.where(ITEMS.ITEM_ID.eq(itemId.id()).or(ITEMS.SKU.eq(itemId.sku().toString())))
+			.where(ITEMS.SKU.eq(itemId.sku().toString()))
 			.execute();
 	}
 
 	@Override
 	public Optional<Item> findItemBySku(String sku)
 	{
-		return ctx.select(ITEMS.ITEM_ID, ITEMS.SKU, ITEMS.NAME, ITEMS.DESCRIPTION, ITEMS.THRESHOLD, ITEMS.CREATED_AT, ITEMS.LAST_UPDATED)
+		return ctx.select(ITEMS.ITEM_ID, ITEMS.INVENTORY_ID, ITEMS.SKU, ITEMS.NAME, ITEMS.DESCRIPTION, ITEMS.THRESHOLD,
+				ITEMS.CREATED_AT, ITEMS.LAST_UPDATED)
 			.from(ITEMS)
 			.where(ITEMS.SKU.eq(sku))
 			.fetchOptional().map(mapToItem);
@@ -102,7 +104,7 @@ public class ItemRepositoryAdapter implements ItemRepository
 	@Override
 	public List<Item> findAllBelowStockThreshold()
 	{
-		return ctx.select(ITEMS.ITEM_ID, ITEMS.SKU, ITEMS.NAME, ITEMS.DESCRIPTION, ITEMS.THRESHOLD, ITEMS.CREATED_AT, ITEMS.LAST_UPDATED)
+		return ctx.select(ITEMS.ITEM_ID, ITEMS.INVENTORY_ID, ITEMS.SKU, ITEMS.NAME, ITEMS.DESCRIPTION, ITEMS.THRESHOLD, ITEMS.CREATED_AT, ITEMS.LAST_UPDATED)
 			.from(ITEMS)
 			.where(ITEMS.THRESHOLD.greaterThan(ITEMS.THRESHOLD))
 			.fetch().map(mapToItem::apply);

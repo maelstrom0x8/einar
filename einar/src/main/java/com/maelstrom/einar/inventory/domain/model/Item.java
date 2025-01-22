@@ -22,7 +22,7 @@ public class Item
 	{
 		updateDetails(name, description, stockThreshold);
 		var sku = Sku.generate(this);
-		this.id = ItemId.of(null, sku);
+		this.id = new ItemId(sku, null);
 	}
 
 	public record  Details(String name, String description, int stockThreshold, LocalDateTime createdAt, LocalDateTime lastUpdated)
@@ -51,7 +51,7 @@ public class Item
 
 	public void updateDetails(String name, String description, int stockThreshold)
 	{
-		this.details = new Details(name, description, stockThreshold, LocalDateTime.now(), null);
+		this.details = new Details(name, description, stockThreshold, LocalDateTime.now(), LocalDateTime.now());
 	}
 
 	public void assignToInventory(@NotNull InventoryId inventoryId)

@@ -56,7 +56,8 @@ class InventoryRepositoryAdapter implements InventoryRepository
 		var inventory = ctx.select(asterisk())
 			.from(INVENTORIES)
 			.where(INVENTORIES.INVENTORY_ID.eq(id.id())).fetchOneInto(Inventory.class);
-
+		if (inventory != null)
+			inventory.setId(id);
 		return Optional.ofNullable(inventory);
 	}
 

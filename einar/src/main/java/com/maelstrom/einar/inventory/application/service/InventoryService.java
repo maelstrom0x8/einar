@@ -67,12 +67,8 @@ public class InventoryService
 
 	public List<Item> getItems(InventoryId id, int offset, int count)
 	{
-		offset = Math.max(offset, 0);
-		count = Math.max(count, 0);
-		if (count == 0)
-			return null;
-
-		return inventoryRepository.findItemsByInventoryId(id, offset, count);
+		Inventory inventory = getInventoryById(id);
+		return itemRepository.findAllByInventoryId(inventory.getId());
 	}
 
 	public Item getItem(ItemId id)

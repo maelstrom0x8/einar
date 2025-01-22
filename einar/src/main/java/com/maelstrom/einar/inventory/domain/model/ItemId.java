@@ -1,9 +1,9 @@
 package com.maelstrom.einar.inventory.domain.model;
 
-public record ItemId(Integer id, Sku sku)
+public record ItemId(Sku sku, InventoryId inventoryId)
 {
-	public static ItemId of(Integer value, Sku sku)
+	public static ItemId of(String sku, InventoryId inventoryId)
 	{
-		return new ItemId(value, sku);
+		return new ItemId(Sku.valueOf(sku), inventoryId);
 	}
 }
