@@ -115,4 +115,25 @@ class InventoryRepositoryAdapter implements InventoryRepository
 		return List.of();
 	}
 
+	@Override
+	public List<Inventory> findAllByAccountId(Integer accountId)
+	{
+		ctx.selectFrom(INVENTORIES).where(INVENTORIES.ACCOUNT_ID.eq(accountId))
+			.fetch().map(e ->
+			{
+				var acctId = e.get(INVENTORIES.ACCOUNT_ID);
+				var invId = e.get(INVENTORIES.INVENTORY_ID);
+				Inventory inventory = Inventory.open(acctId, e.get(INVENTORIES.NAME),
+					e.get(INVENTORIES.DESCRIPTION));
+				var state = State.valueOf(InventoryState.class, e.get(INVENTORIES.STATE).name());
+				inventory.setState(state);
+				inventory.setId(new InventoryId(invId, acctId));
+				inventory.setCreatedAt(e.get(INVENTORIES.CREATED_AT));
+				inventory.setLastUpdated(e.get(INVENTORIES.LAST_UPDATED));
+
+				return inventory;
+			});
+		return List.of();
+	}
+
 }

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
-import static com.maelstrom.jooq.Tables.ACCOUNTS;
+
 import static com.maelstrom.jooq.tables.Inventories.INVENTORIES;
 import static java.util.Arrays.asList;
 
@@ -149,7 +149,6 @@ public class TenantIdentifierListener extends DefaultVisitListener
 	public void visitEnd(VisitContext context) {
 		Integer id = TenantContext.getCurrentTenant();
 		pushConditions(context, INVENTORIES, INVENTORIES.TENANT_ID, id);
-		pushConditions(context, ACCOUNTS, ACCOUNTS.TENANT_ID, id);
 
 		// Check if we're rendering any condition within the WHERE clause
 		// In this case, we can be sure that jOOQ will render a WHERE keyword

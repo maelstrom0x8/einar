@@ -60,14 +60,14 @@ public class Inventories extends TableImpl<InventoriesRecord> {
     public final TableField<InventoriesRecord, Integer> INVENTORY_ID = createField(DSL.name("inventory_id"), SQLDataType.INTEGER.nullable(false).identity(true), this, "");
 
     /**
-     * The column <code>public.inventories.account_id</code>.
-     */
-    public final TableField<InventoriesRecord, Integer> ACCOUNT_ID = createField(DSL.name("account_id"), SQLDataType.INTEGER, this, "");
-
-    /**
      * The column <code>public.inventories.name</code>.
      */
     public final TableField<InventoriesRecord, String> NAME = createField(DSL.name("name"), SQLDataType.VARCHAR(100).nullable(false), this, "");
+
+    /**
+     * The column <code>public.inventories.account_id</code>.
+     */
+    public final TableField<InventoriesRecord, Integer> ACCOUNT_ID = createField(DSL.name("account_id"), SQLDataType.INTEGER.nullable(false), this, "");
 
     /**
      * The column <code>public.inventories.description</code>.
@@ -144,24 +144,7 @@ public class Inventories extends TableImpl<InventoriesRecord> {
 
     @Override
     public List<UniqueKey<InventoriesRecord>> getUniqueKeys() {
-        return Arrays.asList(Keys.INVENTORIES_ACCOUNT_ID_NAME_KEY);
-    }
-
-    @Override
-    public List<ForeignKey<InventoriesRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.INVENTORIES__FK_ACCOUNT);
-    }
-
-    private transient Accounts _accounts;
-
-    /**
-     * Get the implicit join path to the <code>public.accounts</code> table.
-     */
-    public Accounts accounts() {
-        if (_accounts == null)
-            _accounts = new Accounts(this, Keys.INVENTORIES__FK_ACCOUNT);
-
-        return _accounts;
+        return Arrays.asList(Keys.INVENTORIES_TENANT_ID_NAME_KEY);
     }
 
     @Override
@@ -208,14 +191,14 @@ public class Inventories extends TableImpl<InventoriesRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row8<Integer, Integer, String, String, State, LocalDateTime, LocalDateTime, Integer> fieldsRow() {
+    public Row8<Integer, String, Integer, String, State, LocalDateTime, LocalDateTime, Integer> fieldsRow() {
         return (Row8) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function8<? super Integer, ? super Integer, ? super String, ? super String, ? super State, ? super LocalDateTime, ? super LocalDateTime, ? super Integer, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function8<? super Integer, ? super String, ? super Integer, ? super String, ? super State, ? super LocalDateTime, ? super LocalDateTime, ? super Integer, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -223,7 +206,7 @@ public class Inventories extends TableImpl<InventoriesRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function8<? super Integer, ? super Integer, ? super String, ? super String, ? super State, ? super LocalDateTime, ? super LocalDateTime, ? super Integer, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function8<? super Integer, ? super String, ? super Integer, ? super String, ? super State, ? super LocalDateTime, ? super LocalDateTime, ? super Integer, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

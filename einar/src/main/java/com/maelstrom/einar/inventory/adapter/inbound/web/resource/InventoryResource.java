@@ -1,5 +1,6 @@
 package com.maelstrom.einar.inventory.adapter.inbound.web.resource;
 
+import com.maelstrom.config.security.AuthID;
 import com.maelstrom.einar.inventory.adapter.inbound.web.resource.dto.InventoryUpdateRequest;
 import com.maelstrom.einar.inventory.adapter.inbound.web.resource.dto.ItemUpdateRequest;
 import com.maelstrom.einar.inventory.application.dto.InventoryResponse;
@@ -34,7 +35,7 @@ public class InventoryResource
 	}
 
 	@PostMapping
-	public ResponseEntity<Integer> createInventory(Integer accountId, @RequestBody NewInventoryRequest request)
+	public ResponseEntity<Integer> createInventory(@AuthID Integer accountId, @RequestBody NewInventoryRequest request)
 	{
 		Inventory inventory = Inventory.open(accountId, request.name(), request.description());
 		InventoryId id = inventoryService.createInventory(inventory);
@@ -45,21 +46,24 @@ public class InventoryResource
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<InventoryResponse> fetchInventoryById(Integer accountId, @PathVariable Integer inventoryId)
+	public ResponseEntity<InventoryResponse> fetchInventoryById(@AuthID Integer accountId, @PathVariable Integer inventoryId)
 	{
 		Inventory inventory = inventoryService.getInventoryById(new InventoryId(inventoryId, accountId));
 		log.info("Found inventory with id {}", inventory.getId());
 		return ResponseEntity.ok(InventoryResponse.from(inventory));
 	}
 
-	@GetMapping("/{id}/statistics")
-	public Collection<StockDetail> fetchStockStats(@RequestParam("ids") Set<Integer> itemsIds)
+	@GetMapping
+	public List<InventoryResponse> fetchAllInventories(@AuthID Integer accountId)
 	{
-		return inventoryService.statistics(itemsIds);
+		log.info("Fetching inventories for account {}", accountId);
+		List<Inventory> _inv = inventoryService.getAllInventories(accountId);
+		log.info("Found {} inventories", _inv.size());
+		return _inv.stream().map(InventoryResponse::from).toList();
 	}
 
 	@PostMapping("/{id}/items")
-	public ResponseEntity<?> addItemsToInventory(Integer accountId, @PathVariable("id") Integer inventoryId,
+	public ResponseEntity<?> addItemsToInventory(@AuthID Integer accountId, @PathVariable("id") Integer inventoryId,
 																							 @RequestBody List<NewItemRequest> items)
 	{
 		InventoryId id = new InventoryId(inventoryId, accountId);
@@ -78,7 +82,7 @@ public class InventoryResource
 	}
 
 	@GetMapping("/{id}/items/{sku}")
-	public ResponseEntity<?> fetchItemBySku(Integer accountId, @PathVariable("id") Integer inventoryId,
+	public ResponseEntity<?> fetchItemBySku(@AuthID Integer accountId, @PathVariable("id") Integer inventoryId,
 																					@PathVariable("sku") String sku)
 	{
 		ItemId itemId = new ItemId(inventoryId, Sku.valueOf(sku));

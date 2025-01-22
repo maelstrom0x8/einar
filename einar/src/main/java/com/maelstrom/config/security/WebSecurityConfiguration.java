@@ -2,7 +2,6 @@ package com.maelstrom.config.security;
 
 
 import com.maelstrom.config.web.resolvers.AuthenticatedUserResolver;
-import com.maelstrom.einar.account.application.AccountService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,19 +20,11 @@ import java.util.List;
 @Configuration
 public class WebSecurityConfiguration implements WebMvcConfigurer
 {
-	private final AuthenticationManager authenticationManager;
-	private final AccountService accountService;
-
-	public WebSecurityConfiguration(AuthenticationManager authenticationManager, AccountService accountService)
-	{
-		this.authenticationManager = authenticationManager;
-		this.accountService = accountService;
-	}
 
 	@Override
 	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers)
 	{
-		resolvers.add(new AuthenticatedUserResolver(authenticationManager, accountService));
+		resolvers.add(new AuthenticatedUserResolver());
 	}
 
 	@Bean
@@ -50,7 +41,6 @@ public class WebSecurityConfiguration implements WebMvcConfigurer
 		http.authorizeHttpRequests(requests ->
 		{
 			requests.requestMatchers("/actuator/**").permitAll();
-			requests.requestMatchers("/v1/accounts/register").permitAll();
 			requests.anyRequest().authenticated();
 		});
 
@@ -66,6 +56,7 @@ public class WebSecurityConfiguration implements WebMvcConfigurer
 		config.addAllowedHeader("*");
 		config.addAllowedMethod("*");
 		config.setAllowCredentials(true);
+
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", config);

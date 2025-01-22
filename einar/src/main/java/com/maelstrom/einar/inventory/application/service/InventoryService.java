@@ -116,4 +116,9 @@ public class InventoryService
 		log.warn("Removing item with id {}", itemId);
 		itemRepository.deleteById(itemId);
 	}
+
+	public List<Inventory> getAllInventories(Integer accountId)
+	{
+		return inventoryRepository.findAllByAccountId(accountId);
+	}
 }

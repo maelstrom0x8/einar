@@ -18,4 +18,6 @@ public interface InventoryRepository extends GenericRepository<Inventory, Invent
 	Optional<Item> findItemById(ItemId id);
 
 	List<Item> saveItems(Inventory inventory, List<Item> items);
+
+	List<Inventory> findAllByAccountId(Integer accountId);
 }
