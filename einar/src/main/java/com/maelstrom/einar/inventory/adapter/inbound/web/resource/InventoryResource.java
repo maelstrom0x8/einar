@@ -45,7 +45,7 @@ public class InventoryResource
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<InventoryResponse> fetchInventoryById(@AuthID Integer accountId, @PathVariable Integer inventoryId)
+	public ResponseEntity<InventoryResponse> fetchInventoryById(@AuthID Integer accountId, @PathVariable("id") Integer inventoryId)
 	{
 		Inventory inventory = inventoryService.getInventoryById(new InventoryId(inventoryId, accountId));
 		log.info("Found inventory with id {}", inventory.getId());

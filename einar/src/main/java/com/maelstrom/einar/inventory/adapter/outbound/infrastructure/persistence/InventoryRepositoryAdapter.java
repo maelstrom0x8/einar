@@ -119,7 +119,7 @@ class InventoryRepositoryAdapter implements InventoryRepository
 	@Override
 	public List<Inventory> findAllByAccountId(Integer accountId)
 	{
-		ctx.selectFrom(INVENTORIES).where(INVENTORIES.ACCOUNT_ID.eq(accountId))
+		List<Inventory> inventories = ctx.selectFrom(INVENTORIES).where(INVENTORIES.ACCOUNT_ID.eq(accountId))
 			.fetch().map(e ->
 			{
 				var acctId = e.get(INVENTORIES.ACCOUNT_ID);
@@ -134,7 +134,8 @@ class InventoryRepositoryAdapter implements InventoryRepository
 
 				return inventory;
 			});
-		return List.of();
+
+		return inventories;
 	}
 
 }
