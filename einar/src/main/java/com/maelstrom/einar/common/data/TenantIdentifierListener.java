@@ -10,11 +10,12 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
-
+import static com.maelstrom.jooq.tables.Customers.CUSTOMERS;
 import static com.maelstrom.jooq.tables.Inventories.INVENTORIES;
 import static java.util.Arrays.asList;
 
-@SuppressWarnings("unchecked")
+
+@SuppressWarnings({"deprecation", "unchecked", "removal"})
 public class TenantIdentifierListener extends DefaultVisitListener
 {
 	void push(VisitContext context) {
@@ -62,7 +63,7 @@ public class TenantIdentifierListener extends DefaultVisitListener
 		whereStack(context).push(value);
 	}
 
-	<E> void pushConditions(VisitContext context, Table<?> table, Field<E> field, E... values) {
+	<E> void pushConditions(VisitContext context, Table<?> table, Field<E> field, E values) {
 
 		// Check if we're visiting the given table
 		if (context.queryPart() == table) {
@@ -90,7 +91,7 @@ public class TenantIdentifierListener extends DefaultVisitListener
 				}
 
 				// Push a condition for the field of the (potentially aliased) table
-				conditions(context).add(field.in(values));
+				conditions(context).add(field.eq(values));
 			}
 		}
 	}
@@ -149,6 +150,7 @@ public class TenantIdentifierListener extends DefaultVisitListener
 	public void visitEnd(VisitContext context) {
 		Integer id = TenantContext.getCurrentTenant();
 		pushConditions(context, INVENTORIES, INVENTORIES.TENANT_ID, id);
+		pushConditions(context, CUSTOMERS, CUSTOMERS.TENANT_ID, id);
 
 		// Check if we're rendering any condition within the WHERE clause
 		// In this case, we can be sure that jOOQ will render a WHERE keyword

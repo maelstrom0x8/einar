@@ -29,3 +29,13 @@ CREATE TABLE items (
 	CONSTRAINT fk_inventory FOREIGN KEY (inventory_id)
 		REFERENCES inventories(inventory_id) ON DELETE CASCADE
 );
+
+CREATE TABLE customers (
+	customer_id BIGSERIAL PRIMARY KEY,
+	name VARCHAR(100),
+	email VARCHAR(100) UNIQUE,
+	phone VARCHAR(20),
+	created_at TIMESTAMP NOT NULL DEFAULT now(),
+	last_updated TIMESTAMP NOT NULL DEFAULT now(),
+	tenant_id INT NOT NULL
+);

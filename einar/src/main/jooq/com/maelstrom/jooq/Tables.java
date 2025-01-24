@@ -4,6 +4,7 @@
 package com.maelstrom.jooq;
 
 
+import com.maelstrom.jooq.tables.Customers;
 import com.maelstrom.jooq.tables.Inventories;
 import com.maelstrom.jooq.tables.Items;
 
@@ -13,6 +14,11 @@ import com.maelstrom.jooq.tables.Items;
  */
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Tables {
+
+    /**
+     * The table <code>public.customers</code>.
+     */
+    public static final Customers CUSTOMERS = Customers.CUSTOMERS;
 
     /**
      * The table <code>public.inventories</code>.

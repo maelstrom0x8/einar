@@ -4,8 +4,10 @@
 package com.maelstrom.jooq;
 
 
+import com.maelstrom.jooq.tables.Customers;
 import com.maelstrom.jooq.tables.Inventories;
 import com.maelstrom.jooq.tables.Items;
+import com.maelstrom.jooq.tables.records.CustomersRecord;
 import com.maelstrom.jooq.tables.records.InventoriesRecord;
 import com.maelstrom.jooq.tables.records.ItemsRecord;
 
@@ -27,6 +29,8 @@ public class Keys {
     // UNIQUE and PRIMARY KEY definitions
     // -------------------------------------------------------------------------
 
+    public static final UniqueKey<CustomersRecord> CUSTOMERS_EMAIL_KEY = Internal.createUniqueKey(Customers.CUSTOMERS, DSL.name("customers_email_key"), new TableField[] { Customers.CUSTOMERS.EMAIL }, true);
+    public static final UniqueKey<CustomersRecord> CUSTOMERS_PKEY = Internal.createUniqueKey(Customers.CUSTOMERS, DSL.name("customers_pkey"), new TableField[] { Customers.CUSTOMERS.CUSTOMER_ID }, true);
     public static final UniqueKey<InventoriesRecord> INVENTORIES_PKEY = Internal.createUniqueKey(Inventories.INVENTORIES, DSL.name("inventories_pkey"), new TableField[] { Inventories.INVENTORIES.INVENTORY_ID }, true);
     public static final UniqueKey<InventoriesRecord> INVENTORIES_TENANT_ID_NAME_KEY = Internal.createUniqueKey(Inventories.INVENTORIES, DSL.name("inventories_tenant_id_name_key"), new TableField[] { Inventories.INVENTORIES.TENANT_ID, Inventories.INVENTORIES.NAME }, true);
     public static final UniqueKey<ItemsRecord> ITEMS_INVENTORY_ID_NAME_KEY = Internal.createUniqueKey(Items.ITEMS, DSL.name("items_inventory_id_name_key"), new TableField[] { Items.ITEMS.INVENTORY_ID, Items.ITEMS.NAME }, true);

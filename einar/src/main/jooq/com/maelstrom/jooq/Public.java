@@ -4,6 +4,7 @@
 package com.maelstrom.jooq;
 
 
+import com.maelstrom.jooq.tables.Customers;
 import com.maelstrom.jooq.tables.Inventories;
 import com.maelstrom.jooq.tables.Items;
 
@@ -27,6 +28,11 @@ public class Public extends SchemaImpl {
      * The reference instance of <code>public</code>
      */
     public static final Public PUBLIC = new Public();
+
+    /**
+     * The table <code>public.customers</code>.
+     */
+    public final Customers CUSTOMERS = Customers.CUSTOMERS;
 
     /**
      * The table <code>public.inventories</code>.
@@ -54,6 +60,7 @@ public class Public extends SchemaImpl {
     @Override
     public final List<Table<?>> getTables() {
         return Arrays.asList(
+            Customers.CUSTOMERS,
             Inventories.INVENTORIES,
             Items.ITEMS
         );
