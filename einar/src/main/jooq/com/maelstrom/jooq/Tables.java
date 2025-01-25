@@ -7,6 +7,8 @@ package com.maelstrom.jooq;
 import com.maelstrom.jooq.tables.Customers;
 import com.maelstrom.jooq.tables.Inventories;
 import com.maelstrom.jooq.tables.Items;
+import com.maelstrom.jooq.tables.OrderItems;
+import com.maelstrom.jooq.tables.Orders;
 
 
 /**
@@ -29,4 +31,14 @@ public class Tables {
      * The table <code>public.items</code>.
      */
     public static final Items ITEMS = Items.ITEMS;
+
+    /**
+     * The table <code>public.order_items</code>.
+     */
+    public static final OrderItems ORDER_ITEMS = OrderItems.ORDER_ITEMS;
+
+    /**
+     * The table <code>public.orders</code>.
+     */
+    public static final Orders ORDERS = Orders.ORDERS;
 }

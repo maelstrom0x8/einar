@@ -39,3 +39,21 @@ CREATE TABLE customers (
 	last_updated TIMESTAMP NOT NULL DEFAULT now(),
 	tenant_id INT NOT NULL
 );
+
+CREATE TABLE orders (
+	order_id SERIAL PRIMARY KEY,
+	tenant_id INT NOT NULL,
+	created_at TIMESTAMP NOT NULL DEFAULT now(),
+	last_updated TIMESTAMP NOT NULL DEFAULT now()
+);
+
+CREATE TABLE order_items (
+	order_id BIGINT NOT NULL,
+	item_id VARCHAR(12) NOT NULL,
+	quantity INT NOT NULL CHECK (quantity > 0),
+	PRIMARY KEY (order_id, item_id),
+	CONSTRAINT fk_order FOREIGN KEY (order_id)
+		REFERENCES orders (order_id) ON DELETE CASCADE,
+	CONSTRAINT fk_item FOREIGN KEY (item_id)
+		REFERENCES items (sku) ON DELETE CASCADE
+);

@@ -33,7 +33,7 @@ public class ItemRepositoryAdapter implements ItemRepository
 	{
 		Item.Details details = item.getDetails();
 		Record1<Integer> _r = ctx.insertInto(ITEMS)
-			.set(ITEMS.SKU, item.getId().sku().toString())
+			.set(ITEMS.SKU, item.getId().sku().value())
 			.set(ITEMS.NAME, details.name())
 			.set(ITEMS.DESCRIPTION, details.description())
 			.set(ITEMS.THRESHOLD, details.stockThreshold())
@@ -41,7 +41,6 @@ public class ItemRepositoryAdapter implements ItemRepository
 			.set(ITEMS.INVENTORY_ID, item.getInventoryId().id())
 			.set(ITEMS.LAST_UPDATED, details.lastUpdated())
 			.returningResult(ITEMS.ITEM_ID).fetchOne();
-
 		return item;
 	}
 
@@ -56,7 +55,7 @@ public class ItemRepositoryAdapter implements ItemRepository
 				ITEMS.CREATED_AT, ITEMS.LAST_UPDATED)
 			.from(ITEMS)
 			.join(INVENTORIES).on(ITEMS.INVENTORY_ID.eq(INVENTORIES.INVENTORY_ID))
-			.where(ITEMS.SKU.eq(itemId.sku().toString()).and(INVENTORIES.ACCOUNT_ID.eq(_acctId)))
+			.where(ITEMS.SKU.eq(itemId.sku().value()).and(INVENTORIES.ACCOUNT_ID.eq(_acctId)))
 			.fetchOptional().map(mapToItem);
 	}
 
@@ -70,7 +69,7 @@ public class ItemRepositoryAdapter implements ItemRepository
 	{
 		Item item = Item.create(new InventoryId(r.get(ITEMS.INVENTORY_ID), null),
 			r.get(ITEMS.NAME), r.get(ITEMS.DESCRIPTION), r.get(ITEMS.THRESHOLD));
-//		item.setId(ItemId.of(Sku.valueOf(r.get(ITEMS.SKU), new InventoryId(null, null))));
+		item.setId(ItemId.of(r.get(ITEMS.SKU), new InventoryId(r.get(ITEMS.INVENTORY_ID), null)));
 		return item;
 	};
 
