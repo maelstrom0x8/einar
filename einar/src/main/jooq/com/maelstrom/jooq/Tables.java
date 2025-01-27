@@ -9,6 +9,8 @@ import com.maelstrom.jooq.tables.Inventories;
 import com.maelstrom.jooq.tables.Items;
 import com.maelstrom.jooq.tables.OrderItems;
 import com.maelstrom.jooq.tables.Orders;
+import com.maelstrom.jooq.tables.SupplierItems;
+import com.maelstrom.jooq.tables.Suppliers;
 
 
 /**
@@ -41,4 +43,14 @@ public class Tables {
      * The table <code>public.orders</code>.
      */
     public static final Orders ORDERS = Orders.ORDERS;
+
+    /**
+     * The table <code>public.supplier_items</code>.
+     */
+    public static final SupplierItems SUPPLIER_ITEMS = SupplierItems.SUPPLIER_ITEMS;
+
+    /**
+     * The table <code>public.suppliers</code>.
+     */
+    public static final Suppliers SUPPLIERS = Suppliers.SUPPLIERS;
 }

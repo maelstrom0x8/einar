@@ -12,6 +12,7 @@ import java.util.List;
 
 import static com.maelstrom.jooq.tables.Customers.CUSTOMERS;
 import static com.maelstrom.jooq.tables.Inventories.INVENTORIES;
+import static com.maelstrom.jooq.tables.Suppliers.SUPPLIERS;
 import static java.util.Arrays.asList;
 
 
@@ -151,6 +152,7 @@ public class TenantIdentifierListener extends DefaultVisitListener
 		Integer id = TenantContext.getCurrentTenant();
 		pushConditions(context, INVENTORIES, INVENTORIES.TENANT_ID, id);
 		pushConditions(context, CUSTOMERS, CUSTOMERS.TENANT_ID, id);
+		pushConditions(context, SUPPLIERS, SUPPLIERS.TENANT_ID, id);
 
 		// Check if we're rendering any condition within the WHERE clause
 		// In this case, we can be sure that jOOQ will render a WHERE keyword

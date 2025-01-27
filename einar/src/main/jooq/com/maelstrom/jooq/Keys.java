@@ -9,11 +9,15 @@ import com.maelstrom.jooq.tables.Inventories;
 import com.maelstrom.jooq.tables.Items;
 import com.maelstrom.jooq.tables.OrderItems;
 import com.maelstrom.jooq.tables.Orders;
+import com.maelstrom.jooq.tables.SupplierItems;
+import com.maelstrom.jooq.tables.Suppliers;
 import com.maelstrom.jooq.tables.records.CustomersRecord;
 import com.maelstrom.jooq.tables.records.InventoriesRecord;
 import com.maelstrom.jooq.tables.records.ItemsRecord;
 import com.maelstrom.jooq.tables.records.OrderItemsRecord;
 import com.maelstrom.jooq.tables.records.OrdersRecord;
+import com.maelstrom.jooq.tables.records.SupplierItemsRecord;
+import com.maelstrom.jooq.tables.records.SuppliersRecord;
 
 import org.jooq.ForeignKey;
 import org.jooq.TableField;
@@ -43,6 +47,9 @@ public class Keys {
     public static final UniqueKey<ItemsRecord> ITEMS_SKU_KEY = Internal.createUniqueKey(Items.ITEMS, DSL.name("items_sku_key"), new TableField[] { Items.ITEMS.SKU }, true);
     public static final UniqueKey<OrderItemsRecord> ORDER_ITEMS_PKEY = Internal.createUniqueKey(OrderItems.ORDER_ITEMS, DSL.name("order_items_pkey"), new TableField[] { OrderItems.ORDER_ITEMS.ORDER_ID, OrderItems.ORDER_ITEMS.ITEM_ID }, true);
     public static final UniqueKey<OrdersRecord> ORDERS_PKEY = Internal.createUniqueKey(Orders.ORDERS, DSL.name("orders_pkey"), new TableField[] { Orders.ORDERS.ORDER_ID }, true);
+    public static final UniqueKey<SupplierItemsRecord> SUPPLIER_ITEMS_PKEY = Internal.createUniqueKey(SupplierItems.SUPPLIER_ITEMS, DSL.name("supplier_items_pkey"), new TableField[] { SupplierItems.SUPPLIER_ITEMS.SUPPLIER_ID, SupplierItems.SUPPLIER_ITEMS.ITEM_ID }, true);
+    public static final UniqueKey<SuppliersRecord> SUPPLIERS_ACCOUNT_ID_EMAIL_KEY = Internal.createUniqueKey(Suppliers.SUPPLIERS, DSL.name("suppliers_account_id_email_key"), new TableField[] { Suppliers.SUPPLIERS.ACCOUNT_ID, Suppliers.SUPPLIERS.EMAIL }, true);
+    public static final UniqueKey<SuppliersRecord> SUPPLIERS_PKEY = Internal.createUniqueKey(Suppliers.SUPPLIERS, DSL.name("suppliers_pkey"), new TableField[] { Suppliers.SUPPLIERS.ID }, true);
 
     // -------------------------------------------------------------------------
     // FOREIGN KEY definitions
@@ -51,4 +58,6 @@ public class Keys {
     public static final ForeignKey<ItemsRecord, InventoriesRecord> ITEMS__FK_INVENTORY = Internal.createForeignKey(Items.ITEMS, DSL.name("fk_inventory"), new TableField[] { Items.ITEMS.INVENTORY_ID }, Keys.INVENTORIES_PKEY, new TableField[] { Inventories.INVENTORIES.INVENTORY_ID }, true);
     public static final ForeignKey<OrderItemsRecord, ItemsRecord> ORDER_ITEMS__FK_ITEM = Internal.createForeignKey(OrderItems.ORDER_ITEMS, DSL.name("fk_item"), new TableField[] { OrderItems.ORDER_ITEMS.ITEM_ID }, Keys.ITEMS_SKU_KEY, new TableField[] { Items.ITEMS.SKU }, true);
     public static final ForeignKey<OrderItemsRecord, OrdersRecord> ORDER_ITEMS__FK_ORDER = Internal.createForeignKey(OrderItems.ORDER_ITEMS, DSL.name("fk_order"), new TableField[] { OrderItems.ORDER_ITEMS.ORDER_ID }, Keys.ORDERS_PKEY, new TableField[] { Orders.ORDERS.ORDER_ID }, true);
+    public static final ForeignKey<SupplierItemsRecord, ItemsRecord> SUPPLIER_ITEMS__FK_ITEM = Internal.createForeignKey(SupplierItems.SUPPLIER_ITEMS, DSL.name("fk_item"), new TableField[] { SupplierItems.SUPPLIER_ITEMS.ITEM_ID }, Keys.ITEMS_SKU_KEY, new TableField[] { Items.ITEMS.SKU }, true);
+    public static final ForeignKey<SupplierItemsRecord, SuppliersRecord> SUPPLIER_ITEMS__FK_SUPPLIER = Internal.createForeignKey(SupplierItems.SUPPLIER_ITEMS, DSL.name("fk_supplier"), new TableField[] { SupplierItems.SUPPLIER_ITEMS.SUPPLIER_ID }, Keys.SUPPLIERS_PKEY, new TableField[] { Suppliers.SUPPLIERS.ID }, true);
 }

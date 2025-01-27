@@ -57,3 +57,26 @@ CREATE TABLE order_items (
 	CONSTRAINT fk_item FOREIGN KEY (item_id)
 		REFERENCES items (sku) ON DELETE CASCADE
 );
+
+CREATE TABLE suppliers (
+	id SERIAL PRIMARY KEY,
+	name VARCHAR(100) NOT NULL,
+	email VARCHAR(100),
+	phone VARCHAR(20),
+	created_at TIMESTAMP NOT NULL DEFAULT now(),
+	last_updated TIMESTAMP NOT NULL DEFAULT now(),
+	account_id INT NOT NULL,
+	tenant_id INT NOT NULL,
+
+	UNIQUE (account_id, email)
+);
+
+CREATE TABLE supplier_items (
+	supplier_id INT NOT NULL,
+	item_id VARCHAR(12) NOT NULL,
+	PRIMARY KEY (supplier_id, item_id),
+	CONSTRAINT fk_supplier FOREIGN KEY (supplier_id)
+		REFERENCES suppliers (id) ON DELETE CASCADE,
+	CONSTRAINT fk_item FOREIGN KEY (item_id)
+		REFERENCES items (sku) ON DELETE CASCADE
+);

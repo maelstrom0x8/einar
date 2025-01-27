@@ -9,6 +9,8 @@ import com.maelstrom.jooq.tables.Inventories;
 import com.maelstrom.jooq.tables.Items;
 import com.maelstrom.jooq.tables.OrderItems;
 import com.maelstrom.jooq.tables.Orders;
+import com.maelstrom.jooq.tables.SupplierItems;
+import com.maelstrom.jooq.tables.Suppliers;
 
 import java.util.Arrays;
 import java.util.List;
@@ -57,6 +59,16 @@ public class Public extends SchemaImpl {
     public final Orders ORDERS = Orders.ORDERS;
 
     /**
+     * The table <code>public.supplier_items</code>.
+     */
+    public final SupplierItems SUPPLIER_ITEMS = SupplierItems.SUPPLIER_ITEMS;
+
+    /**
+     * The table <code>public.suppliers</code>.
+     */
+    public final Suppliers SUPPLIERS = Suppliers.SUPPLIERS;
+
+    /**
      * No further instances allowed
      */
     private Public() {
@@ -76,7 +88,9 @@ public class Public extends SchemaImpl {
             Inventories.INVENTORIES,
             Items.ITEMS,
             OrderItems.ORDER_ITEMS,
-            Orders.ORDERS
+            Orders.ORDERS,
+            SupplierItems.SUPPLIER_ITEMS,
+            Suppliers.SUPPLIERS
         );
     }
 }
