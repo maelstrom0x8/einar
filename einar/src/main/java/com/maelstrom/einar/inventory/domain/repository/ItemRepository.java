@@ -15,5 +15,5 @@ public interface ItemRepository extends GenericRepository<Item, ItemId>
 
 	Optional<Item> findItemBySku(String sku);
 
-	List<Item> findAllBelowStockThreshold();
+	List<Item> findAllWithinThreshold();
 }

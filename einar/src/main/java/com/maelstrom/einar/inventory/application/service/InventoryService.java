@@ -89,11 +89,11 @@ public class InventoryService
 		}
 	}
 
-	public void updateItem(ItemId itemId, String name, String description, int stockThreshold)
+	public void updateItem(ItemId itemId, String name, String description, int min, int max)
 	{
 		itemRepository.findById(itemId).ifPresent(item ->
 		{
-			item.updateDetails(name, description, stockThreshold);
+			item.updateDetails(name, description, min, max);
 			itemRepository.save(item);
 		});
 	}

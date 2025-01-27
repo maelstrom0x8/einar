@@ -15,12 +15,12 @@ import java.util.function.Function;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
-import org.jooq.Function8;
+import org.jooq.Function9;
 import org.jooq.Identity;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Records;
-import org.jooq.Row8;
+import org.jooq.Row9;
 import org.jooq.Schema;
 import org.jooq.SelectField;
 import org.jooq.Table;
@@ -69,11 +69,6 @@ public class Items extends TableImpl<ItemsRecord> {
     public final TableField<ItemsRecord, String> NAME = createField(DSL.name("name"), SQLDataType.VARCHAR(100).nullable(false), this, "");
 
     /**
-     * The column <code>public.items.threshold</code>.
-     */
-    public final TableField<ItemsRecord, Integer> THRESHOLD = createField(DSL.name("threshold"), SQLDataType.INTEGER.nullable(false), this, "");
-
-    /**
      * The column <code>public.items.description</code>.
      */
     public final TableField<ItemsRecord, String> DESCRIPTION = createField(DSL.name("description"), SQLDataType.CLOB, this, "");
@@ -82,6 +77,16 @@ public class Items extends TableImpl<ItemsRecord> {
      * The column <code>public.items.sku</code>.
      */
     public final TableField<ItemsRecord, String> SKU = createField(DSL.name("sku"), SQLDataType.VARCHAR(12).nullable(false), this, "");
+
+    /**
+     * The column <code>public.items.bmax</code>.
+     */
+    public final TableField<ItemsRecord, Integer> BMAX = createField(DSL.name("bmax"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.field(DSL.raw("0"), SQLDataType.INTEGER)), this, "");
+
+    /**
+     * The column <code>public.items.bmin</code>.
+     */
+    public final TableField<ItemsRecord, Integer> BMIN = createField(DSL.name("bmin"), SQLDataType.INTEGER.nullable(false).defaultValue(DSL.field(DSL.raw("0"), SQLDataType.INTEGER)), this, "");
 
     /**
      * The column <code>public.items.created_at</code>.
@@ -203,18 +208,18 @@ public class Items extends TableImpl<ItemsRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row8 type methods
+    // Row9 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row8<Integer, Integer, String, Integer, String, String, LocalDateTime, LocalDateTime> fieldsRow() {
-        return (Row8) super.fieldsRow();
+    public Row9<Integer, Integer, String, String, String, Integer, Integer, LocalDateTime, LocalDateTime> fieldsRow() {
+        return (Row9) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function8<? super Integer, ? super Integer, ? super String, ? super Integer, ? super String, ? super String, ? super LocalDateTime, ? super LocalDateTime, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function9<? super Integer, ? super Integer, ? super String, ? super String, ? super String, ? super Integer, ? super Integer, ? super LocalDateTime, ? super LocalDateTime, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -222,7 +227,7 @@ public class Items extends TableImpl<ItemsRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function8<? super Integer, ? super Integer, ? super String, ? super Integer, ? super String, ? super String, ? super LocalDateTime, ? super LocalDateTime, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function9<? super Integer, ? super Integer, ? super String, ? super String, ? super String, ? super Integer, ? super Integer, ? super LocalDateTime, ? super LocalDateTime, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

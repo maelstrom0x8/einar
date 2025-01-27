@@ -1,57 +1,42 @@
 package com.maelstrom.einar.inventory.domain.model;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@NoArgsConstructor
+@Data
 public class Item
 {
 	private ItemId id;
 	private InventoryId inventoryId;
 	private Details details;
+	private String name;
+	private String description;
+	private LocalDateTime createdAt;
+	private LocalDateTime lastUpdated;
+	private int min;
+	private int max;
 
-	public static Item create(InventoryId inventoryId, String name, String description, int stockThreshold)
+
+	public Item(InventoryId inventoryId, String name, String description, int min, int max)
 	{
-		Item item = new Item(name, description, stockThreshold);
-		item.inventoryId = inventoryId;
-		return item;
+		this.inventoryId = inventoryId;
+		this.name = name;
+		this.description = description;
+		this.min = min;
+		this.max = max;
 	}
 
-	private Item(String name, String description, int stockThreshold)
+	public void updateDetails(String name, String description, int min, int max)
 	{
-		updateDetails(name, description, stockThreshold);
-		var sku = Sku.generate(this);
-		this.id = new ItemId(sku, null);
-	}
-
-	public record  Details(String name, String description, int stockThreshold, LocalDateTime createdAt, LocalDateTime lastUpdated)
-	{
-	}
-
-	public ItemId getId()
-	{
-		return id;
-	}
-
-	public void setId(ItemId id)
-	{
-		this.id = id;
-	}
-
-	public InventoryId getInventoryId()
-	{
-		return inventoryId;
-	}
-
-	public Details getDetails()
-	{
-		return details;
-	}
-
-	public void updateDetails(String name, String description, int stockThreshold)
-	{
-		this.details = new Details(name, description, stockThreshold, LocalDateTime.now(), LocalDateTime.now());
+		this.name = name;
+		this.description = description;
+		this.min = min;
+		this.max = max;
 	}
 
 	public void assignToInventory(@NotNull InventoryId inventoryId)

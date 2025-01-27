@@ -6,7 +6,7 @@ import com.maelstrom.einar.inventory.domain.model.ItemId;
 import com.maelstrom.einar.inventory.domain.repository.ItemRepository;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
-import org.jooq.Record8;
+import org.jooq.Record9;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -31,15 +31,16 @@ public class ItemRepositoryAdapter implements ItemRepository
 	@Override
 	public Item save(Item item)
 	{
-		Item.Details details = item.getDetails();
+
 		Record1<Integer> _r = ctx.insertInto(ITEMS)
 			.set(ITEMS.SKU, item.getId().sku().value())
-			.set(ITEMS.NAME, details.name())
-			.set(ITEMS.DESCRIPTION, details.description())
-			.set(ITEMS.THRESHOLD, details.stockThreshold())
-			.set(ITEMS.CREATED_AT, details.createdAt())
+			.set(ITEMS.NAME, item.getName())
+			.set(ITEMS.DESCRIPTION, item.getDescription())
+			.set(ITEMS.BMIN, item.getMin())
+			.set(ITEMS.BMAX, item.getMax())
+			.set(ITEMS.CREATED_AT, item.getCreatedAt() != null ? item.getCreatedAt() : LocalDateTime.now())
 			.set(ITEMS.INVENTORY_ID, item.getInventoryId().id())
-			.set(ITEMS.LAST_UPDATED, details.lastUpdated())
+			.set(ITEMS.LAST_UPDATED,  LocalDateTime.now())
 			.returningResult(ITEMS.ITEM_ID).fetchOne();
 		return item;
 	}
@@ -49,9 +50,9 @@ public class ItemRepositoryAdapter implements ItemRepository
 	{
 		if (itemId == null)
 			throw new IllegalArgumentException("itemId cannot be null");
-//		var _invId = itemId.inventoryId().id();
+
 		var _acctId = itemId.inventoryId().accountId();
-		return ctx.select(ITEMS.ITEM_ID, ITEMS.INVENTORY_ID, ITEMS.SKU, ITEMS.NAME, ITEMS.DESCRIPTION, ITEMS.THRESHOLD,
+		return ctx.select(ITEMS.ITEM_ID, ITEMS.INVENTORY_ID, ITEMS.SKU, ITEMS.NAME, ITEMS.DESCRIPTION, ITEMS.BMIN, ITEMS.BMAX,
 				ITEMS.CREATED_AT, ITEMS.LAST_UPDATED)
 			.from(ITEMS)
 			.join(INVENTORIES).on(ITEMS.INVENTORY_ID.eq(INVENTORIES.INVENTORY_ID))
@@ -65,10 +66,13 @@ public class ItemRepositoryAdapter implements ItemRepository
 		return List.of();
 	}
 
-	private static final Function<Record8<Integer, Integer, String, String, String, Integer, LocalDateTime, LocalDateTime>, Item> mapToItem = r ->
+	private static final
+	Function<? super Record9<Integer, Integer, String, String, String, Integer, Integer, LocalDateTime, LocalDateTime>,
+			? extends Item>
+		mapToItem = r ->
 	{
-		Item item = Item.create(new InventoryId(r.get(ITEMS.INVENTORY_ID), null),
-			r.get(ITEMS.NAME), r.get(ITEMS.DESCRIPTION), r.get(ITEMS.THRESHOLD));
+		Item item = new Item(new InventoryId(r.get(ITEMS.INVENTORY_ID), null),
+			r.get(ITEMS.NAME), r.get(ITEMS.DESCRIPTION), r.get(ITEMS.BMIN), r.get(ITEMS.BMAX));
 		item.setId(ItemId.of(r.get(ITEMS.SKU), new InventoryId(r.get(ITEMS.INVENTORY_ID), null)));
 		return item;
 	};
@@ -76,7 +80,7 @@ public class ItemRepositoryAdapter implements ItemRepository
 	@Override
 	public List<Item> findAllByInventoryId(InventoryId inventoryId)
 	{
-		return ctx.select(ITEMS.ITEM_ID, ITEMS.INVENTORY_ID, ITEMS.SKU, ITEMS.NAME, ITEMS.DESCRIPTION, ITEMS.THRESHOLD,
+		return ctx.select(ITEMS.ITEM_ID, ITEMS.INVENTORY_ID, ITEMS.SKU, ITEMS.NAME, ITEMS.DESCRIPTION, ITEMS.BMIN, ITEMS.BMAX,
 				ITEMS.CREATED_AT, ITEMS.LAST_UPDATED)
 			.from(ITEMS).where(ITEMS.INVENTORY_ID.eq(inventoryId.id()))
 			.fetch().map(mapToItem::apply);
@@ -93,7 +97,7 @@ public class ItemRepositoryAdapter implements ItemRepository
 	@Override
 	public Optional<Item> findItemBySku(String sku)
 	{
-		return ctx.select(ITEMS.ITEM_ID, ITEMS.INVENTORY_ID, ITEMS.SKU, ITEMS.NAME, ITEMS.DESCRIPTION, ITEMS.THRESHOLD,
+		return ctx.select(ITEMS.ITEM_ID, ITEMS.INVENTORY_ID, ITEMS.SKU, ITEMS.NAME, ITEMS.DESCRIPTION, ITEMS.BMIN, ITEMS.BMAX,
 				ITEMS.CREATED_AT, ITEMS.LAST_UPDATED)
 			.from(ITEMS)
 			.where(ITEMS.SKU.eq(sku))
@@ -101,11 +105,12 @@ public class ItemRepositoryAdapter implements ItemRepository
 	}
 
 	@Override
-	public List<Item> findAllBelowStockThreshold()
+	public List<Item> findAllWithinThreshold()
 	{
-		return ctx.select(ITEMS.ITEM_ID, ITEMS.INVENTORY_ID, ITEMS.SKU, ITEMS.NAME, ITEMS.DESCRIPTION, ITEMS.THRESHOLD, ITEMS.CREATED_AT, ITEMS.LAST_UPDATED)
+		int count = ctx.fetchCount(ITEMS);
+		return ctx.select(ITEMS.ITEM_ID, ITEMS.INVENTORY_ID, ITEMS.SKU, ITEMS.NAME, ITEMS.DESCRIPTION, ITEMS.BMIN, ITEMS.BMAX, ITEMS.CREATED_AT, ITEMS.LAST_UPDATED)
 			.from(ITEMS)
-			.where(ITEMS.THRESHOLD.greaterThan(ITEMS.THRESHOLD))
+			.where(ITEMS.BMIN.lessOrEqual(count)).and(ITEMS.BMAX.greaterOrEqual(count))
 			.fetch().map(mapToItem::apply);
 	}
 }

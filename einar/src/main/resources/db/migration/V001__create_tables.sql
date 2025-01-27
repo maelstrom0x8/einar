@@ -19,9 +19,10 @@ CREATE TABLE items (
 	item_id SERIAL PRIMARY KEY,
 	inventory_id INT,
 	name VARCHAR(100) NOT NULL UNIQUE,
-	threshold INT NOT NULL,
 	description TEXT,
 	sku VARCHAR(12) NOT NULL UNIQUE,
+	bmax INT NOT NULL DEFAULT 0,
+	bmin INT NOT NULL DEFAULT 0,
 	created_at TIMESTAMP NOT NULL,
 	last_updated TIMESTAMP NOT NULL,
 
